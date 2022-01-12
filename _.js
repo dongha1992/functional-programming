@@ -102,3 +102,29 @@ const _reduce = (...args) => {
 };
 
 _reduce([1, 2, 3], add);
+
+/* _pipe */
+
+const _pipe = (...args) => {
+  const fns = args;
+  return function (arg) {
+    return _reduce(
+      fns,
+      function (arg, fn) {
+        return fn(arg);
+      },
+      arg
+    );
+  };
+};
+
+const f1 = _pipe(
+  function (a) {
+    return a + 1;
+  },
+  function (a) {
+    return a * 2;
+  }
+);
+
+f1(1);
