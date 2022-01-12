@@ -41,8 +41,40 @@ const _map = (list, mapper) => {
   return newList;
 };
 
-const mapper = (user) => {
-  return user.name;
+const names = _map(over_30, _get("name"));
+
+/* _curry */
+
+const _curry = (fn) => {
+  return function (a, b) {
+    return arguments.length === 2
+      ? fn(a, b)
+      : function (b) {
+          return fn(a, b);
+        };
+  };
 };
 
-const names = _map(over_30, mapper);
+const add = _curry((a, b) => {
+  return a + b;
+});
+const add10 = add(10);
+console.log(add10(5));
+
+/* curryr */
+
+const _curryr = (fn) => {
+  return function (a, b) {
+    return arguments.length === 2
+      ? fn(a, b)
+      : function (b) {
+          return fn(b, a);
+        };
+  };
+};
+
+/* _get */
+
+const _get = _curryr((obj, key) => {
+  return obj === null ? undefined : obj[key];
+});
