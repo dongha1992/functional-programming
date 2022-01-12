@@ -4,7 +4,7 @@ import { users } from "./data";
 
 const _each = (list, iter) => {
   for (let i = 0; i < list.length; i++) {
-    iter[list[i]];
+    iter(list[i]);
   }
   return list;
 };
@@ -78,3 +78,15 @@ const _curryr = (fn) => {
 const _get = _curryr((obj, key) => {
   return obj === null ? undefined : obj[key];
 });
+
+/* _reduce */
+
+const _reduce = (list, iter, memo) => {
+  _each(list, function (val) {
+    memo = iter(memo, val);
+  });
+
+  return memo;
+};
+
+_reduce([1, 2, 3, 4], add, 0);
