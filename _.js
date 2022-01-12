@@ -79,9 +79,21 @@ const _get = _curryr((obj, key) => {
   return obj === null ? undefined : obj[key];
 });
 
-/* _reduce */
+/* rest */
+const _rest = (list, num) => {
+  const slice = Array.prototype.slice;
+  return slice.call(list, num || 1);
+};
 
-const _reduce = (list, iter, memo) => {
+/* _reduce */
+const _reduce = (...args) => {
+  let [list, iter, memo] = args;
+
+  if (args.length === 2) {
+    memo = list[0];
+    list = _rest(list);
+  }
+
   _each(list, function (val) {
     memo = iter(memo, val);
   });
@@ -89,4 +101,4 @@ const _reduce = (list, iter, memo) => {
   return memo;
 };
 
-_reduce([1, 2, 3, 4], add, 0);
+_reduce([1, 2, 3], add);
