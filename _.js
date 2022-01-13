@@ -133,7 +133,6 @@ f1(1);
 
 const _go = (...args) => {
   const fns = _rest(args);
-
   return _pipe.apply(null, fns)(args[0]);
 };
 
