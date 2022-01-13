@@ -128,3 +128,23 @@ const f1 = _pipe(
 );
 
 f1(1);
+
+/* _go */
+
+const _go = (...args) => {
+  const fns = _rest(args);
+  return _pipe.apply(null, fns)(args[0]);
+};
+
+const f2 = _go(
+  1,
+  function (a) {
+    return a + 1;
+  },
+  function (a) {
+    return a * 2;
+  },
+  function (a) {
+    return a * a;
+  }
+);
