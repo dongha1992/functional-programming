@@ -9,9 +9,21 @@ const _each = (list, iter) => {
   return list;
 };
 
+/* curryr */
+
+const _curryr = (fn) => {
+  return function (a, b) {
+    return arguments.length === 2
+      ? fn(a, b)
+      : function (b) {
+          return fn(b, a);
+        };
+  };
+};
+
 /* filter */
 
-const _filter = (list, predicate) => {
+const _filter = _curryr((list, predicate) => {
   const newList = [];
 
   _each(list, function (val) {
@@ -21,7 +33,7 @@ const _filter = (list, predicate) => {
   });
 
   return newList;
-};
+});
 
 const predicate = (user) => {
   return user.age >= 30;
@@ -31,7 +43,7 @@ const predicate = (user) => {
 
 const over_30 = _filter(users, predicate);
 
-const _map = (list, mapper) => {
+const _map = _curryr((list, mapper) => {
   const newList = [];
 
   _each(list, function (val) {
@@ -39,7 +51,7 @@ const _map = (list, mapper) => {
   });
 
   return newList;
-};
+});
 
 const names = _map(over_30, _get("name"));
 
@@ -60,18 +72,6 @@ const add = _curry((a, b) => {
 });
 const add10 = add(10);
 console.log(add10(5));
-
-/* curryr */
-
-const _curryr = (fn) => {
-  return function (a, b) {
-    return arguments.length === 2
-      ? fn(a, b)
-      : function (b) {
-          return fn(b, a);
-        };
-  };
-};
 
 /* _get */
 
@@ -149,3 +149,28 @@ const f2 = _go(
     return a * a;
   }
 );
+/* _go 응용 */
+
+_go(
+  users,
+  function (users) {
+    return _filter(users, function (user) {
+      return user.age >= 30;
+    });
+  },
+  function (users) {
+    return _map(users, _get("name"));
+  }
+);
+
+// [ 'ID', 'BJ', 'JM' ]
+
+/* _go + _curryr */
+
+_go(
+  users,
+  _filter((user) => user.age >= 30),
+  _map(_get("name"))
+);
+
+// [ 'ID', 'BJ', 'JM' ]
