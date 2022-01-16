@@ -1,9 +1,13 @@
 import { users } from "./data";
 
+/* _length */
+
+const _length = _get("length");
+
 /* forEach */
 
 const _each = (list, iter) => {
-  for (let i = 0; i < list.length; i++) {
+  for (let i = 0; i < _length(list); i++) {
     iter(list[i]);
   }
   return list;
@@ -165,7 +169,7 @@ _go(
 
 // [ 'ID', 'BJ', 'JM' ]
 
-/* _go + _curryr */
+/* _go + _curryr + arrow function */
 
 _go(
   users,
@@ -174,3 +178,15 @@ _go(
 );
 
 // [ 'ID', 'BJ', 'JM' ]
+
+/* _forEach 다형성 */
+
+_each(null);
+_map(null, (v) => v);
+
+/* _keys*/
+
+const _keys = (obj) => {
+  const isObject = typeof obj === "object" && !!obj;
+  return isObject ? Object.keys(obj) : [];
+};
