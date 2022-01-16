@@ -7,10 +7,19 @@ const _length = _get("length");
 /* forEach */
 
 const _each = (list, iter) => {
-  for (let i = 0; i < _length(list); i++) {
-    iter(list[i]);
+  const keys = _keys(list);
+
+  for (let i = 0; i < keys.length; i++) {
+    iter(list[keys[[i]]]);
   }
   return list;
+};
+
+/* _keys */
+
+const _keys = (obj) => {
+  const isObject = typeof obj === "object" && !!obj;
+  return isObject ? Object.keys(obj) : [];
 };
 
 /* curryr */
@@ -184,9 +193,12 @@ _go(
 _each(null);
 _map(null, (v) => v);
 
-/* _keys*/
+/* _each 외부 다형성 */
 
-const _keys = (obj) => {
-  const isObject = typeof obj === "object" && !!obj;
-  return isObject ? Object.keys(obj) : [];
-};
+_each(
+  {
+    13: "ID",
+    19: "HD",
+  },
+  (name) => console.log(name)
+);
