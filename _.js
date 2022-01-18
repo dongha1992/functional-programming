@@ -248,6 +248,8 @@ _reject(users, (user) => user.age > 30);
 
 const _compact = _filter(_identity);
 
+// 3. 찾아내기
+
 /* _find */
 
 const _find = (list, predi) => {
@@ -272,3 +274,18 @@ const _findIndex = (list, predi) => {
   }
   return -1;
 };
+/* _some */
+
+const _some = (data, predi) => {
+  return _findIndex(data, predi || _identity) !== -1;
+};
+
+/* _every */
+
+const _every = (data, predi) => {
+  return _findIndex(data, _negate(predi || _identity)) === -1;
+};
+
+// 4. 접기
+
+/* */
