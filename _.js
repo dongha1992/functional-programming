@@ -202,3 +202,18 @@ _each(
   },
   (name) => console.log(name)
 );
+
+/* 수집하기 - map, values, pluck  */
+/* 거르기 - filter, reject, compact, without */
+/* 찾아내기 - find, some, every */
+/* 접기,축약하기 - reduce, min, max, group_by, count_by */
+
+// 1.  수집하기
+
+const _values = (data) => {
+  return _map(data, _identity);
+};
+
+const _identity = (val) => {
+  return val;
+};
