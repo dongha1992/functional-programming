@@ -228,12 +228,47 @@ const _pluck = (data, key) => {
 
 // 2. 거르기
 
-/* reject */
+/* _negate */
+
+const _negate = (func) => {
+  return function (val) {
+    return !func(val);
+  };
+};
+
+/* _reject */
 
 const _reject = (data, predi) => {
-  return _filter(data, (val) => {
-    return !predi(val);
-  });
+  return _filter(data, _negate(predi));
 };
 
 _reject(users, (user) => user.age > 30);
+
+/* _compact */
+
+const _compact = _filter(_identity);
+
+/* _find */
+
+const _find = (list, predi) => {
+  const keys = _keys(list);
+  for (let i = 0; i < keys.length; i++) {
+    const val = list[keys[i]];
+    if (predi(val)) {
+      return val;
+    }
+  }
+};
+
+/* _findIndex */
+
+const _findIndex = (list, predi) => {
+  const keys = _keys(list);
+  for (let i = 0; i < keys.length; i++) {
+    const val = list[keys[i]];
+    if (predi(list[keys[i]])) {
+      return i;
+    }
+  }
+  return -1;
+};
