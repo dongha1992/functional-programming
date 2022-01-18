@@ -288,4 +288,30 @@ const _every = (data, predi) => {
 
 // 4. 접기
 
-/* */
+/* _min & _max */
+
+const _min = (data) => {
+  return _reduce(data, (cur, acc) => {
+    return cur < acc ? cur : acc;
+  });
+};
+
+const _max = (data) => {
+  return _reduce(data, (cur, acc) => {
+    return cur > acc ? cur : acc;
+  });
+};
+
+/* _minBy */
+
+const _minBy = _curryr((data, iter) => {
+  return _reduce(data, (cur, acc) => {
+    return iter(cur) < iter(acc) ? cur : acc;
+  });
+});
+
+_go(
+  users,
+  _filter((user) => user.age >= 30),
+  _minBy((user) => user.age)
+);
