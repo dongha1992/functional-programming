@@ -315,3 +315,52 @@ _go(
   _filter((user) => user.age >= 30),
   _minBy((user) => user.age)
 );
+
+/* _groupBy */
+
+const _groupBy = _curryr((data, iter) => {
+  return _reduce(
+    data,
+    (grouped, val) => {
+      const key = iter(val);
+      (grouped[key] = grouped[key] || []).push(val);
+      return grouped;
+    },
+    {}
+  );
+});
+
+_groupBy(users, (user) => user.age);
+
+const _push = (obj, key, val) => {
+  (obj[key] = obj[key] || []).push(val);
+  return obj;
+};
+
+// const _groupBy = _curryr((data, iter) => {
+//   return _reduce(
+//     data,
+//     (grouped, val) => {
+//       return _push(grouped, iter(val), val);
+//     },
+//     {}
+//   );
+// });
+
+const _head = (list) => {
+  return list[0];
+};
+
+_go(users, _groupBy(_pipe(_get("name"), _head)));
+
+// {
+//   I: [ { id: 1, name: 'ID', age: 30 } ],
+//   B: [ { id: 2, name: 'BJ', age: 32 } ],
+//   J: [
+//     { id: 3, name: 'JM', age: 36 },
+//     { id: 6, name: 'JR', age: 18 },
+//     { id: 7, name: 'JR', age: 18 }
+//   ],
+//   P: [ { id: 4, name: 'PJ', age: 10 } ],
+//   H: [ { id: 5, name: 'HA', age: 15 } ]
+// }
