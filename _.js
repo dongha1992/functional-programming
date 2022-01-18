@@ -208,7 +208,9 @@ _each(
 /* 찾아내기 - find, some, every */
 /* 접기,축약하기 - reduce, min, max, group_by, count_by */
 
-// 1.  수집하기
+// 1. 수집하기
+
+/* _values */
 
 const _values = (data) => {
   return _map(data, _identity);
@@ -217,3 +219,21 @@ const _values = (data) => {
 const _identity = (val) => {
   return val;
 };
+
+/* _pluck */
+
+const _pluck = (data, key) => {
+  return _map(data, (obj) => obj[key]);
+};
+
+// 2. 거르기
+
+/* reject */
+
+const _reject = (data, predi) => {
+  return _filter(data, (val) => {
+    return !predi(val);
+  });
+};
+
+_reject(users, (user) => user.age > 30);
