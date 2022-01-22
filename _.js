@@ -408,3 +408,14 @@ const _take = _curryr((list, index) => {
 /* 끝을 내는 함수 */
 // take
 // some, every, find
+
+_go(
+  _range(100),
+  L._map((val) => {
+    return val * val;
+  }),
+  L._filter((val) => {
+    return val % 2;
+  }),
+  L._take(5)
+);
