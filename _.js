@@ -364,3 +364,41 @@ _go(users, _groupBy(_pipe(_get("name"), _head)));
 //   P: [ { id: 4, name: 'PJ', age: 10 } ],
 //   H: [ { id: 5, name: 'HA', age: 15 } ]
 // }
+
+/* _countBy */
+
+const _countBy = _curryr((data, iter) => {
+  return _reduce(
+    data,
+    (count, val) => {
+      const key = iter(val);
+      count[key] = count[key] ? count[key]++ : 1;
+      return count;
+    },
+    {}
+  );
+});
+
+_countBy(users, (user) => user.age);
+
+/* _range */
+
+const _range = (length) => {
+  let i = -1;
+  let result = [];
+
+  while (++i < length) {
+    result.push(i);
+  }
+  return result;
+};
+
+// 1. 지연평가 //
+
+/* 지연 평가를 시작하고 시키는(이어가는) 함수 */
+// map
+// filter, reject
+
+/* 끝을 내는 함수 */
+// take
+// some, every, find
