@@ -393,6 +393,12 @@ const _range = (length) => {
   return result;
 };
 
+/* _take */
+
+const _take = _curryr((list, index) => {
+  return list.slice(0, index);
+});
+
 // 1. 지연평가 //
 
 /* 지연 평가를 시작하고 시키는(이어가는) 함수 */
