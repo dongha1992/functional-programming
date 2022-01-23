@@ -17,6 +17,8 @@ export const posts = [
   { id: 206, body: "내용6", userId: 20 },
   { id: 207, body: "내용7", userId: 1 },
   { id: 208, body: "내용8", userId: 2 },
+  { id: 209, body: "내용9", userId: 2 },
+  { id: 210, body: "내용10", userId: 3 },
 ];
 export const comments = [
   { id: 301, body: "댓글1", userId: 1, postId: 201 },
@@ -28,4 +30,5 @@ export const comments = [
   { id: 307, body: "댓글7", userId: 1, postId: 201 },
   { id: 308, body: "댓글8", userId: 2, postId: 202 },
   { id: 309, body: "댓글9", userId: 3, postId: 201 },
+  { id: 309, body: "댓글10", userId: 3, postId: 208 },
 ];
