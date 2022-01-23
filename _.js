@@ -422,23 +422,22 @@ _go(
 
 /* _contains */
 
-
-const _contains = (list, target => {
-  if(Array.isArry(list)){
-    for(let i = 0; i < list.length; i++){
-      if(list[i] === target){
-        return true
+const _contains = (list, target) => {
+  if (Array.isArry(list)) {
+    for (let i = 0; i < list.length; i++) {
+      if (list[i] === target) {
+        return true;
       } else {
-        return false
+        return false;
       }
     }
   } else {
-    for(let val in list){
-      if(list[val] === target){
-        return true
+    for (let val in list) {
+      if (list[val] === target) {
+        return true;
       } else {
-        return false
+        return false;
       }
     }
   }
-}
+};
