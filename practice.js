@@ -57,6 +57,13 @@ const postByPostId = _pipe(_pluck("postId"), (postIds) => {
   });
 });
 
+_go(
+  _filter(comments, (comment) => {
+    return comment.userId === 3;
+  }),
+  postByPostId
+);
+
 // 5. users + posts + comments (indexBy와 groupBy)
 
 // 5.1 특정인의 posts의 모든 comments 거르기

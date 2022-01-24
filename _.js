@@ -434,3 +434,16 @@ const _contains = (list, target) => {
     false
   );
 };
+
+/* _extend */
+
+const _extend = (...arg) => {
+  const [obj, target] = arg;
+  if (obj === null || typeof obj !== "object") {
+    return obj;
+  }
+  for (let key in target) {
+    obj[key] = target[key];
+  }
+  return obj;
+};
