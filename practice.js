@@ -51,6 +51,12 @@ _go(
 
 // 4. 특정인이 comment 단 posts 거르기
 
+const postByPostId = _pipe(_pluck("postId"), (postIds) => {
+  return _filter(posts, (post) => {
+    return _contains(postIds, post.id);
+  });
+});
+
 // 5. users + posts + comments (indexBy와 groupBy)
 
 // 5.1 특정인의 posts의 모든 comments 거르기

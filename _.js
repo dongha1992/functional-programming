@@ -423,21 +423,14 @@ _go(
 /* _contains */
 
 const _contains = (list, target) => {
-  if (Array.isArray(list)) {
-    for (let i = 0; i < list.length; i++) {
-      if (list[i] === target) {
+  return _reduce(
+    list,
+    (found, item) => {
+      if (found) {
         return true;
-      } else {
-        return false;
       }
-    }
-  } else {
-    for (let val in list) {
-      if (list[val] === target) {
-        return true;
-      } else {
-        return false;
-      }
-    }
-  }
+      return item === target;
+    },
+    false
+  );
 };
