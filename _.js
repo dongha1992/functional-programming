@@ -423,7 +423,7 @@ _go(
 /* _contains */
 
 const _contains = (list, target) => {
-  if (Array.isArry(list)) {
+  if (Array.isArray(list)) {
     for (let i = 0; i < list.length; i++) {
       if (list[i] === target) {
         return true;
