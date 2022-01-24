@@ -447,3 +447,34 @@ const _extend = (...arg) => {
   }
   return obj;
 };
+
+/* _uniq */
+
+const _uniq = _curryr((list) => {
+  let uniqArr = [];
+  _each(list, (val) => {
+    if (uniqArr.includes(val)) {
+      uniqArr.push(val);
+    }
+  });
+  return uniqArr;
+});
+
+/* _indexBy */
+const _indexBy = (list, key) => {
+  let listLength = list.length,
+    obj = {};
+
+  for (let i = 0; i < listLength; i++) {
+    obj[list[i][key]] = list[i];
+  }
+
+  return obj;
+};
+
+// const _indexBy = arr => {
+//   return arr.reduce((obj, cur) => {
+//     obj[cur.id] = cur;
+//     return obj;
+//   }, {});
+// };
