@@ -168,9 +168,25 @@ const mergedUsers = _map(hashedUsers, (user) => {
 });
 
 // 5.1 특정인의 posts의 모든 comments 거르기
+const targetUser = mergedUsers[0];
+
+_go(targetUser.posts, _pluck("comments"), _flatten);
 
 // 5.2 특정인의 posts에 comments 단 친구의 이름 뽑기
+_go(
+  targetUser.posts,
+  _pluck("comments"),
+  _flatten,
+  _pluck("user"),
+  _pluck("name")
+);
 
 // 5.3 특정인의 posts에 comments 단 친구들 카운트 정보
 
 // 5.4 특정인의 comment를 단 posts 거르기
+
+_filter(mergedPosts, (post) => {
+  return _find(post.comments, (comment) => {
+    return comment.userId === 1;
+  });
+});
