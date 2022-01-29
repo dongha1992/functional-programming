@@ -32,3 +32,31 @@ export const comments = [
   { id: 309, body: "댓글9", userId: 3, postId: 201 },
   { id: 309, body: "댓글10", userId: 3, postId: 208 },
 ];
+
+export const products = [
+  {
+    isSelected: true,
+    name: "반팔티",
+    price: 10000,
+    sizes: [
+      { name: "L", quantity: 1, price: 0 },
+      { name: "XL", quantity: 1, price: 0 },
+      { name: "XXL", quantity: 1, price: 0 },
+    ],
+  },
+  {
+    isSelected: true,
+    name: "후드티",
+    price: 20000,
+    sizes: [
+      { name: "L", quantity: 3, price: -1000 },
+      { name: "XL", quantity: 1, price: 0 },
+    ],
+  },
+  {
+    isSelected: false,
+    name: "맨투맨",
+    price: 16000,
+    sizes: [{ name: "L", quantity: 4, price: 0 }],
+  },
+];
