@@ -203,3 +203,40 @@ L.map = function* (f, iter) {
 
 const it = L.map((a) => a + 10, [1, 2, 3]);
 it.next(); // 11
+
+// L.filter
+
+L.filter = function* (f, iter) {
+  for (const a of iter) {
+    if (f(a)) {
+      yield f(a);
+    }
+  }
+};
+
+// for of 대체
+
+// let cur
+//  while(!(cur = iter.next()).done){
+//   const a = cur.value
+//   yield f(a)
+// }
+
+// queryStr
+
+const queryStr = (obj) => {
+  return go(
+    obj,
+    Object.entries,
+    map(([k, v]) => `${k}=${v}`),
+    reduce((a, b) => `${a}&${b}`)
+  );
+};
+
+// find
+
+const find = (f, iter) => {
+  return go(iter, filter(f), take(1), ([a]) => a);
+};
+
+find((u) => u.age < 30, users);
