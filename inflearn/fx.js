@@ -6,6 +6,45 @@ const products = [
   { name: "바지", price: 25000, quantity: 5 },
 ];
 
+const users = [
+  {
+    name: "a",
+    age: "12",
+    family: [
+      { name: "a1", age: 53 },
+      { name: "a1", age: 53 },
+      { name: "a3", age: 53 },
+    ],
+  },
+  {
+    name: "b",
+    age: "13",
+    family: [
+      { name: "b1", age: 53 },
+      { name: "b1", age: 53 },
+      { name: "b3", age: 53 },
+    ],
+  },
+  {
+    name: "c",
+    age: "14",
+    family: [
+      { name: "c1", age: 53 },
+      { name: "c1", age: 53 },
+      { name: "c3", age: 53 },
+    ],
+  },
+  {
+    name: "d",
+    age: "15",
+    family: [
+      { name: "d1", age: 53 },
+      { name: "d1", age: 53 },
+      { name: "d3", age: 53 },
+    ],
+  },
+];
+
 // map 구현
 
 const map = (f, iter) => {
@@ -209,18 +248,23 @@ it.next(); // 11
 L.filter = function* (f, iter) {
   for (const a of iter) {
     if (f(a)) {
-      yield f(a);
+      yield a;
     }
   }
 };
 
 // for of 대체
 
-// let cur
-//  while(!(cur = iter.next()).done){
-//   const a = cur.value
-//   yield f(a)
-// }
+//  L.filter = function* (f, iter) {
+//    iter = iter[Symbol.iterator]();
+//    let cur;
+//    while (!(cur = iter.next()).done) {
+//      const a = cur.value;
+//      if (f(a)) {
+//        yield a;
+//      }
+//    }
+//  }
 
 // queryStr
 
@@ -272,12 +316,31 @@ L.flatten = function* (iter) {
   }
 };
 
-// const it = L.flatten([[1, 2], [1], [[2, 3]]]);
-// console.log([...it]);
-
 const flatten = pipe(L.flatten, take(Infinity));
 
-// const lit = flatten([[1, 2], [1], [[2, 3]]]);
-// console.log([...it]);
+// L.deepFlat
+
+L.deepFlat = function* f(iter) {
+  for (const a of iter) {
+    if (isIterable(a)) {
+      yield* f(a);
+    } else {
+      yield a;
+    }
+  }
+};
 
 // L.faltMap
+
+L.flatMap = curry(pipe(L.map, L.flatten));
+
+// 2차원 배열 다루기
+
+go(
+  users2,
+  L.map((u) => u.family),
+  L.flatten,
+  L.filter((u) => u.age < 20),
+  L.map((u) => u.name),
+  take(4)
+);
