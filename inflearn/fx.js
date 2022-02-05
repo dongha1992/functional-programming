@@ -195,11 +195,11 @@ const take = (l, iter) => {
 
 // L.map
 
-L.map = function* (f, iter) {
+L.map = curry(function* (f, iter) {
   for (const a of iter) {
     yield f(a);
   }
-};
+});
 
 const it = L.map((a) => a + 10, [1, 2, 3]);
 it.next(); // 11
@@ -239,4 +239,45 @@ const find = (f, iter) => {
   return go(iter, filter(f), take(1), ([a]) => a);
 };
 
-find((u) => u.age < 30, users);
+// L.map으로 map 만들기
+// L.map curry로 만듦
+
+// 1) go로
+
+// const mapL = curry((f, iter) => {
+//   return go(iter, L.map(f), take(Infinity));
+// });
+
+// 2) pipe로
+
+const mapL = curry(pipe(L.map, take(Infinity)));
+
+mapL((a) => a + 10, L.range(4));
+
+// L.flatten
+
+const isIterable = (a) => {
+  return a && a[Symbol.iterator];
+};
+
+L.flatten = function* (iter) {
+  for (const a of iter) {
+    if (isIterable(a)) {
+      for (const b of a) {
+        yield b;
+      }
+    } else {
+      yield a;
+    }
+  }
+};
+
+// const it = L.flatten([[1, 2], [1], [[2, 3]]]);
+// console.log([...it]);
+
+const flatten = pipe(L.flatten, take(Infinity));
+
+// const lit = flatten([[1, 2], [1], [[2, 3]]]);
+// console.log([...it]);
+
+// L.faltMap
