@@ -344,3 +344,161 @@ go(
   L.map((u) => u.name),
   take(4)
 );
+
+// 비동기
+// promise의 가장 큰 특징은 비동기 값을 일급으로 다룬다는 것 = promise 객체를 리턴해서 값으로 다룸
+
+/* 일급 활용 */
+
+// 아래의 경우는 a, f 두 인자 모두 동기적으로 작동해야 함
+
+const go1 = (a, f) => f(a);
+const add5 = (a) => a + 5;
+
+// 비동기로 함수값을 넘김
+
+const delay100 = (a) =>
+  new Promise((resolve) =>
+    setTimeout(() => {
+      resolve(a);
+    }, 100)
+  );
+
+// Promise 인지 검사를 하고
+
+const go2 = (a, f) => {
+  return a instanceof Promise ? a.then(f) : f(a);
+};
+
+go2(delay100(10), add5);
+
+// Promise는 값으로 다뤄질 수 있으니 값을 만들어서 then처리
+
+const r2 = go2(delay100(10), add5);
+r2.then();
+
+// Composition --> 안전하게 합성하기 위해 모나드 등장
+
+const g = (a) => a + 1;
+const f = (a) => a * a;
+
+// f(g()) -> 빈값 들어올 수도 있음
+// []라는 박스를 만들고 거기 안에 있는 값을 다룸.
+
+[1]
+  .map(g)
+  .map(f)
+  .forEach((r) => console.log(r)); // 4
+
+// 값이 없는 경우, 마지막 forEach가 실행되지 않음.
+
+[]
+  .map(g)
+  .map(f)
+  .forEach((r) => console.log(r));
+
+// promise인 경우, 비동기 값을 안전하게 합성한다.
+// 하지만 Promise경우도 resolve에 값이 없으면 NaN을 뱉는다.
+// 즉, promise도 값이 있고 없고의 관점이 아니라, 동기냐 비동기에 초점을 맞추기 때문
+
+Promise.resolve(1)
+  .then(g)
+  .then(f)
+  .then((r) => console.log(r)); // 4
+
+// Kleisli Composition
+// 오류가 있을 수 있는 상황에서 안전하게 합성하게 할 수 있는 규칙
+
+// f(g(x)) = f(g(x))의 경우 오른쪽 x가 함수 g에 의해 평가될 때 왼쪽 x와 값이 달라질 수 있음
+// f(g(x)) = g(x)가 같게 하는 것이 Kleisli Composition
+
+const store = [
+  { id: 1, name: "aa" },
+  { id: 2, name: "bb" },
+  { id: 3, name: "cc" },
+];
+
+// const getUserById = (id) => {
+//   return find((u) => u.id === id, store);
+// };
+
+const getUserById = (id) => {
+  return find((u) => u.id === id, store) || Promise.reject("못찾음");
+};
+
+const fName = ({ name }) => name;
+const g2 = getUserById;
+
+const fg = (id) => fName(g2(id)); // "bb"
+
+console.log(fg(2) === fg(2)); // true
+
+// 하지만 실무에선 이런 일이 벌어질 수도 있다.
+
+const res1 = fg(2);
+
+store.pop();
+store.pop();
+
+const res2 = fg(2);
+
+console.log(fg(2) === fg(2)); // false
+
+// promise 경우
+
+const fg2 = (id) => Promise.resolve(id).then(g2).then(fName);
+
+/* go, pipe, reduce로 비동기 제어 */
+
+// go, pipe를 제어하는 reduce를 수정한다.
+
+const reduceAsnc1 = curry((f, acc, iter) => {
+  if (!iter) {
+    iter = acc[Symbol.iterator]();
+    acc = iter.next().value;
+  } else {
+    iter = acc[Symbol.iterator]();
+  }
+
+  let cur;
+
+  while (!(cur = iter.next()).done) {
+    const val = cur.value;
+    // promise를 만나면 then으로 promise 처리
+    // 하지만 좋은 코드는 아님
+
+    /*
+      goAsnc(1, 
+        a => a + 10,
+        a => Promise.resolve(a - 9),
+        a => a + 10,
+        )
+    */
+    // 위의 상황에서 promise 아래 코드들은 promise 체인에 물리기 때문에.
+    acc = acc instanceof Promise ? acc.then((acc) => f(acc, val)) : f(acc, val);
+  }
+  return acc;
+});
+
+const reduceAsnc2 = curry((f, acc, iter) => {
+  if (!iter) {
+    iter = acc[Symbol.iterator]();
+    acc = iter.next().value;
+  } else {
+    iter = acc[Symbol.iterator]();
+  }
+
+  // 유명함수를 만들어서 재귀로 return
+  return (function recur(acc) {
+    let cur;
+    while (!(cur = iter.next()).done) {
+      const val = cur.value;
+      acc = f(acc, val);
+      // acc가 promise면 recur 실행
+      if (acc instanceof Promise) {
+        return acc.then(recur);
+      }
+    }
+    return acc;
+  })(acc);
+});
