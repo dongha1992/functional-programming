@@ -236,7 +236,8 @@ const take = (l, iter) => {
 
 L.map = curry(function* (f, iter) {
   for (const a of iter) {
-    yield f(a);
+    // yield f(a)
+    yield goAsnc(a, f);
   }
 });
 
@@ -366,7 +367,7 @@ const delay100 = (a) =>
 
 // Promise 인지 검사를 하고
 
-const go2 = (a, f) => {
+const goAsnc = (a, f) => {
   return a instanceof Promise ? a.then(f) : f(a);
 };
 
@@ -489,16 +490,69 @@ const reduceAsnc2 = curry((f, acc, iter) => {
   }
 
   // 유명함수를 만들어서 재귀로 return
-  return (function recur(acc) {
+
+  // return (function recur(acc) {
+  //   let cur;
+  //   while (!(cur = iter.next()).done) {
+  //     const val = cur.value;
+  //     acc = f(acc, val);
+  //     // acc가 promise면 recur 실행
+  //     // 하지만 여전히 첫 번째 인자가 promise면 에러 발생
+  //     if (acc instanceof Promise) {
+  //       return acc.then(recur);
+  //     }
+  //   }
+  //   return acc;
+  // })(acc);
+
+  // 아래처럼 goAsnc를 만들어서 실행하면 됨
+
+  return goAsnc(acc, function recur(acc) {
     let cur;
     while (!(cur = iter.next()).done) {
       const val = cur.value;
       acc = f(acc, val);
-      // acc가 promise면 recur 실행
       if (acc instanceof Promise) {
         return acc.then(recur);
       }
     }
     return acc;
-  })(acc);
+  });
 });
+
+// const goAsnc = (a, f) => {
+//   return a instanceof Promise ? a.then(f) : f(a);
+// };
+
+/* 지연 평가 + Promise --> L.map, map, take*/
+
+// 1. L.map에 goAsnc 추가
+// 2. take에서 promise 인지 판단 후 재귀함수
+
+/* promise 제어 take 함수 */
+
+// const take = curry((l, iter) => {
+//   let res = [];
+//   return (function recur() {
+//     for (const a of iter) {
+//       if (a instanceof Promise) {
+//         return a.then((result) => {
+//           res.push(result);
+//           console.log(res, "S", res.length === l);
+//           if (res.length === l) {
+//             return res;
+//           } else {
+//             return recur();
+//           }
+//         });
+//       }
+//       res.push(a);
+//       if (res.length === l) {
+//         return res;
+//       }
+//     }
+//     return res;
+//   })();
+// });
+
+/* async, await */
