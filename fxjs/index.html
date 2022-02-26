@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>함수형 연습</title>
+    <script src="js/partial.js"></script>
+    <script src="js/_.js"></script>
+  </head>
+  <body>
+    <script>
+      const users2 = [
+        { id: 1, name: "ID", age: 30 },
+        { id: 2, name: "BJ", age: 32 },
+        { id: 3, name: "JM", age: 36 },
+        { id: 4, name: "PJ", age: 10 },
+        { id: 5, name: "HA", age: 15 },
+        { id: 6, name: "JR", age: 18 },
+        { id: 7, name: "JR", age: 18 },
+        { id: 8, name: "JR1", age: 18 },
+        { id: 20, name: "DH", age: 20 },
+      ];
+
+      const _each = (list, iter) => {
+        for (let i = 0; i < list.length; i++) {
+          iter(list[i]);
+        }
+        return list;
+      };
+
+      const _filter = (list, predi) => {
+        const newList = [];
+        _each(list, (val) => {
+          if (predi(val)) {
+            newList.push(val);
+          }
+        });
+        return newList;
+      };
+
+      const _map = (list, mapper) => {
+        const newList = [];
+        _each(list, (val) => {
+          newList.push(mapper(val));
+        });
+
+        return newList;
+      };
+
+      // const result = _filter(users2, (user) => user.age > 30);
+      // const result = _map(users2, (user) => user.age);
+
+      console.log(result);
+    </script>
+  </body>
+</html>
