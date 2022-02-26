@@ -20,6 +20,31 @@
         { id: 20, name: "DH", age: 20 },
       ];
 
+      /* curry가 적용된 add()를 실행하기 위해서는 add(1)(2)
+       *  만약, add(1, 2) 이렇게 인자가 두 개 들어왔을 경우 즉시 실행되게 해줘야 함
+       */
+
+      function _curry(fn) {
+        return function (a, b) {
+          return arguments.length === 2
+            ? fn(a, b)
+            : function (b) {
+                return fn(a, b);
+              };
+        };
+      }
+
+      const _curryr =
+        (fn) =>
+        (arg, ...args) => {
+          return args.length ? fn(arg, ...args) : (...args) => fn(arg, ...args);
+        };
+
+      const add = _curryr((a, b) => a + b);
+      console.log(add(10, 5));
+
+      const _get = () => {};
+
       const _each = (list, iter) => {
         for (let i = 0; i < list.length; i++) {
           iter(list[i]);
