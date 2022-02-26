@@ -37,13 +37,17 @@
       const _curryr =
         (fn) =>
         (arg, ...args) => {
-          return args.length ? fn(arg, ...args) : (...args) => fn(arg, ...args);
+          return args.length ? fn(arg, ...args) : (...args) => fn(...args, arg);
         };
 
-      const add = _curryr((a, b) => a + b);
-      console.log(add(10, 5));
+      const _get = _curryr((obj, key) => {
+        return obj === null ? undefined : obj[key];
+      });
 
-      const _get = () => {};
+      /* _get은 curry 적용해서 _get("name")(users2[0]) 이렇게 표현 가능
+       * 결국 const getName = _get("name"),
+       *     getName(users2[0]) 이렇게 함수로 만들 수 있음.
+       */
 
       const _each = (list, iter) => {
         for (let i = 0; i < list.length; i++) {
@@ -71,8 +75,26 @@
         return newList;
       };
 
+      const _rest = (list, number) => {
+        const slice = Array.prototype.slice;
+        return slice.call(list, number || 1);
+      };
+
+      const _reduce = (list, iter, memo) => {
+        // 초기값 없는 경우
+        if (arguments.length === 2) {
+          memo = list[0];
+          list = _rest(list);
+        }
+        _each(list, (val) => {
+          memo = iter(memo, val);
+        });
+        return memo;
+      };
+
       // const result = _filter(users2, (user) => user.age > 30);
-      // const result = _map(users2, (user) => user.age);
+      // const result = _map(users2, _get("name"));
+      const result = _reduce([1, 2, 3], (a, b) => a + b, 0);
 
       console.log(result);
     </script>
