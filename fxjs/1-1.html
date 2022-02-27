@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>함수형 연습</title>
+    <script src="./_.js"></script>
+  </head>
+  <body>
+    <script>
+      const users2 = [
+        { id: 1, name: "ID", age: 30 },
+        { id: 2, name: "BJ", age: 32 },
+        { id: 3, name: "JM", age: 36 },
+        { id: 4, name: "PJ", age: 10 },
+        { id: 5, name: "HA", age: 15 },
+        { id: 6, name: "JR", age: 18 },
+        { id: 7, name: "JR", age: 18 },
+        { id: 8, name: "JR1", age: 18 },
+        { id: 20, name: "DH", age: 20 },
+      ];
+
+      // const result = _filter(users2, (user) => user.age > 30);
+      // const result = _map(users2, _get("name"));
+      // const result = _reduce([1, 2, 3], (a, b) => a + b, 0);
+
+      // const result = _go(
+      //   10,
+      //   (a) => a + 1,
+      //   (a) => a + 4,
+      //   (a) => a - 10
+      // );
+
+      /* 아래의 형태는 curryr를 통해서 축약 가능 -> map, filter에 curryr 적용
+       * ex) _map([1, 2, 3], (val) => val * 2)는 curryr 후
+       *     _map((val) => val * 2)([1, 2, 3]) 이렇게 평가 순서 바꿀 수 있음
+       */
+
+      /* _map, _filter _curryr 적용 전*/
+
+      // _go(
+      //   users2,
+      //   (users) =>
+      //     _filter(users, (user) => {
+      //       return user.age >= 30;
+      //     }),
+      //   (users) => _map(users, _get("name")),
+      //   console.log
+      // );
+
+      /* _map, _filter _curryr 적용 후 */
+
+      _go(
+        users2,
+        _filter((user) => user.age > 30),
+        _map(_get("name")),
+        console.log
+      );
+    </script>
+  </body>
+</html>
