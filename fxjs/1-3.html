@@ -19,12 +19,57 @@
         { id: 8, name: "JR1", age: 18 },
         { id: 20, name: "DH", age: 20 },
       ];
-      /* 지연 평가 */
+
+      /* 1. 지연 평가 */
 
       /* map, filter, reject의 함수는 지연평가를 시작하는 함수
        *  take, some, every, find는 지연평가를 끝내는 함수
        *
        */
+
+      let mapCount = 0;
+      let filterCount = 0;
+
+      _.go(
+        _.range(100),
+        _.map((val) => {
+          ++mapCount;
+          return val * val;
+        }),
+        _.filter((val) => {
+          ++filterCount;
+          return val % 2;
+        }),
+        _.take(5),
+        console.log
+      );
+      console.log(mapCount, "mapCount");
+      console.log(filterCount, "filterCount");
+
+      /* map, filter 함수가 돌 때마다 100씩 실행 */
+
+      /* 지연평가 도입 후 */
+
+      let lmapCount = 0;
+      let lfilterCount = 0;
+
+      _.go(
+        _.range(100),
+        L.map((val) => {
+          ++lmapCount;
+          return val * val;
+        }),
+        L.filter((val) => {
+          ++lfilterCount;
+          return val % 2;
+        }),
+        L.take(5),
+        console.log
+      );
+      console.log(lmapCount, "mapCount");
+      console.log(lfilterCount, "filterCount");
+
+      /* map, filter 함수가 돌 때마다 10만 실행 */
     </script>
   </body>
 </html>
