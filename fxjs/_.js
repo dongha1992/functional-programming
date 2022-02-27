@@ -42,6 +42,7 @@ const _each = (list, iter) => {
   const keys = _keys(list);
 
   for (let i = 0; i < keys.length; i++) {
+    /* key, value 쌍을 볼 수 있도록 두 번째 인자에 key 넘김 */
     iter(list[keys[i]], keys[i]);
   }
   return list;
@@ -59,8 +60,8 @@ const _filter = _curryr((list, predi) => {
 
 const _map = _curryr((list, mapper) => {
   const newList = [];
-  _each(list, (val) => {
-    newList.push(mapper(val));
+  _each(list, (val, key) => {
+    newList.push(mapper(val, key));
   });
 
   return newList;
@@ -139,9 +140,9 @@ const _negate = (func) => (val) => {
 
 /* 2-2 reject */
 
-const _reject = (data, predi) => {
+const _reject = _curryr((data, predi) => {
   return _filter(data, _negate(predi));
-};
+});
 
 /* 2-3 compact */
 
@@ -174,10 +175,82 @@ const _findIndex = _curryr((list, predi) => {
 /* 3-3 some */
 
 const _some = _curryr((data, predi) => {
+  predi = predi || _identity;
   return _findIndex(data, predi) !== -1;
 });
 
 /* 3-4 every */
 const _every = _curryr((data, predi) => {
+  predi = predi || _identity;
   return _findIndex(data, _negate(predi)) === -1;
+});
+
+/* 4-1 min, max */
+
+const _min = (data) => {
+  return _reduce(data, (a, b) => {
+    return a < b ? a : b;
+  });
+};
+const _max = (data) => {
+  return _reduce(data, (a, b) => {
+    return a < b ? b : a;
+  });
+};
+
+/* 4-2 minBy, maxBy */
+
+const _minBy = _curryr((data, iter) => {
+  return _reduce(data, (a, b) => {
+    return iter(a) < iter(b) ? a : b;
+  });
+});
+
+const _maxBy = _curryr((data, iter) => {
+  return _reduce(data, (a, b) => {
+    return iter(a) < iter(b) ? b : a;
+  });
+});
+
+/* 4-3 groupBy */
+
+const _head = (list) => {
+  return list[0];
+};
+
+const _push = (obj, key, val) => {
+  (obj[key] = obj[key] || []).push(val);
+  return obj;
+};
+
+const _groupBy = _curryr((data, iter) => {
+  return _reduce(
+    data,
+    (grouped, val) => {
+      return _push(grouped, iter(val), val);
+    },
+    {}
+  );
+});
+
+/* 4-4 countBy */
+
+const _inc = (count, key) => {
+  count[key] ? count[key]++ : (count[key] = 1);
+  return count;
+};
+
+const _countBy = _curryr((data, iter) => {
+  return _reduce(
+    data,
+    (count, val) => {
+      return _inc(count, iter(val));
+    },
+    {}
+  );
+});
+
+/* pairs */
+const _pairs = _map((val, key) => {
+  return [key, val];
 });

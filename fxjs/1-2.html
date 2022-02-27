@@ -36,6 +36,37 @@
         _every((user) => user.age > 9),
         console.log
       );
+
+      _go(
+        users2,
+        _reject((user) => user.age < 30),
+        _maxBy(_get("age")),
+        _get("name"),
+        console.log
+      );
+
+      _go(
+        users2,
+        _groupBy((user) => user.age),
+        console.log
+      );
+
+      _go(users2, _groupBy(_pipe(_get("name"), _head)), console.log);
+
+      _go(
+        users2,
+        _map((a) => a.age),
+        console.log
+      );
+
+      _go(
+        users2,
+        _countBy((user) => user.age - (user.age % 10)),
+        _map((count, key) => {
+          return [count, key];
+        }),
+        console.log
+      );
     </script>
   </body>
 </html>
