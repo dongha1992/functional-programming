@@ -42,34 +42,7 @@
         { id: 309, body: "댓글9", userId: 3, postId: 201 },
         { id: 309, body: "댓글10", userId: 3, postId: 208 },
         { id: 310, body: "댓글11", userId: 1, postId: 208 },
-      ];
-
-      const products = [
-        {
-          isSelected: true,
-          name: "반팔티",
-          price: 10000,
-          sizes: [
-            { name: "L", quantity: 1, price: 0 },
-            { name: "XL", quantity: 1, price: 0 },
-            { name: "XXL", quantity: 1, price: 0 },
-          ],
-        },
-        {
-          isSelected: true,
-          name: "후드티",
-          price: 20000,
-          sizes: [
-            { name: "L", quantity: 3, price: -1000 },
-            { name: "XL", quantity: 1, price: 0 },
-          ],
-        },
-        {
-          isSelected: false,
-          name: "맨투맨",
-          price: 16000,
-          sizes: [{ name: "L", quantity: 4, price: 0 }],
-        },
+        { id: 311, body: "댓글12", userId: 2, postId: 209 },
       ];
 
       const targetUserId = 1;
@@ -83,7 +56,16 @@
           return _.contains(postsIds, comment.postId);
         });
       });
-      // 1. 특정인의 posts의 모든 comments 거르기
+
+      const userNamesByComments = _.pipe(
+        _.map((comment) => {
+          return _.find(users, (user) => {
+            return user.id === comment.userId;
+          }).name;
+        })
+      );
+
+      // 1. 특정인의 posts의 모든 comments 찾기
 
       // posts에서 특정 유저의 post 찾기
       // posts들의 id만 뽑음
@@ -100,14 +82,105 @@
         { userId: targetUserId },
         postsBy,
         commentsByPosts,
-        _.map((comment) => {
-          return _.find(users, (user) => {
-            return user.id === comment.userId;
-          }).name;
-        }),
+        userNamesByComments,
         _.uniq,
         console.log
       );
+
+      // 3. 특정인의 posts에 comments를 단 친구들 카운트 정보
+
+      _.go(
+        { userId: targetUserId },
+        postsBy,
+        commentsByPosts,
+        userNamesByComments,
+        _.countBy,
+        console.log
+      );
+
+      // 4. 특정인이 comment를 단 psots 찾기
+
+      _.go(
+        _.where(comments, { userId: 2 }),
+        _.pluck("postId"),
+        _.uniq,
+        (postsIds) => {
+          return _.filter(posts, (post) => {
+            return _.contains(postsIds, post.id);
+          });
+        },
+        console.log
+      );
+
+      /* 두 개의 배열 순회하는 것을 hash 형태로 데이터 변환하기 */
+
+      /* 5. user + posts + comments 합치기 indexBy, groupBy */
+
+      // comments에 users 추가하는데 extend로 user 키를 추가하고 find로 user 값 넣으면 비효율적
+
+      const users2 = _.indexBy(users, "id");
+
+      const comments2 = _.go(
+        comments,
+        _.map((comment) => {
+          return _.extend({ user: users2[comment.userId] }, comment);
+        }),
+        _.groupBy("postId")
+      );
+
+      const posts2 = _.go(
+        posts,
+        _.map((post) => {
+          return _.extend(
+            {
+              comments: comments2[post.id] || [],
+              user: users2[post.userId],
+            },
+            post
+          );
+        }),
+        _.groupBy("userId")
+      );
+
+      const user3 = _.map(users2, (user) => {
+        return _.extend(
+          {
+            posts: posts2[user.id] || [],
+          },
+          user
+        );
+      });
+
+      console.log(user3);
+
+      /* 바뀐 데이터 형으로 1 ~ 4 다시 해보기 */
+
+      /* 1-1 */
+
+      const targetUser = user3[1];
+
+      _.go(targetUser.posts, _.pluck("comments"), _.flatten, console.log);
+
+      /* 2-1 */
+
+      _.go(
+        targetUser.posts,
+        _.pluck("comments"),
+        _.flatten,
+        _.pluck("user"),
+        _.pluck("name"),
+        _.uniq,
+        console.log
+      );
+
+      _.go(
+        targetUser,
+        _.deep_pluck("posts.comments.user.name"),
+        _.uniq,
+        console.log
+      );
+
+      /* 3-1 */
     </script>
   </body>
 </html>
