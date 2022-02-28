@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>실습 예제 코드</title>
+    <script src="./_.js"></script>
+    <script src="./partial.js"></script>
+  </head>
+  <body>
+    <script>
+      const users = [
+        { id: 1, name: "ID", age: 30 },
+        { id: 2, name: "BJ", age: 32 },
+        { id: 3, name: "JM", age: 36 },
+        { id: 4, name: "PJ", age: 10 },
+        { id: 5, name: "HA", age: 15 },
+        { id: 6, name: "JR", age: 18 },
+        { id: 20, name: "JRA", age: 40 },
+      ];
+
+      const posts = [
+        { id: 201, body: "내용1", userId: 1 },
+        { id: 202, body: "내용2", userId: 2 },
+        { id: 203, body: "내용3", userId: 3 },
+        { id: 204, body: "내용4", userId: 4 },
+        { id: 205, body: "내용5", userId: 5 },
+        { id: 206, body: "내용6", userId: 20 },
+        { id: 207, body: "내용7", userId: 1 },
+        { id: 208, body: "내용8", userId: 2 },
+        { id: 209, body: "내용9", userId: 2 },
+        { id: 210, body: "내용10", userId: 3 },
+      ];
+      const comments = [
+        { id: 301, body: "댓글1", userId: 1, postId: 201 },
+        { id: 302, body: "댓글2", userId: 2, postId: 202 },
+        { id: 303, body: "댓글3", userId: 3, postId: 203 },
+        { id: 304, body: "댓글4", userId: 4, postId: 204 },
+        { id: 305, body: "댓글5", userId: 5, postId: 205 },
+        { id: 306, body: "댓글6", userId: 20, postId: 201 },
+        { id: 307, body: "댓글7", userId: 1, postId: 201 },
+        { id: 308, body: "댓글8", userId: 2, postId: 202 },
+        { id: 309, body: "댓글9", userId: 3, postId: 201 },
+        { id: 309, body: "댓글10", userId: 3, postId: 208 },
+      ];
+
+      const products = [
+        {
+          isSelected: true,
+          name: "반팔티",
+          price: 10000,
+          sizes: [
+            { name: "L", quantity: 1, price: 0 },
+            { name: "XL", quantity: 1, price: 0 },
+            { name: "XXL", quantity: 1, price: 0 },
+          ],
+        },
+        {
+          isSelected: true,
+          name: "후드티",
+          price: 20000,
+          sizes: [
+            { name: "L", quantity: 3, price: -1000 },
+            { name: "XL", quantity: 1, price: 0 },
+          ],
+        },
+        {
+          isSelected: false,
+          name: "맨투맨",
+          price: 16000,
+          sizes: [{ name: "L", quantity: 4, price: 0 }],
+        },
+      ];
+
+      const targetUserId = 1;
+
+      // 1. 특정인의 posts의 모든 comments 거르기
+
+      // posts에서 특정 유저의 post 찾기
+      // posts들의 id만 뽑음
+      // comments 돌면서 comment의 postId와 거른 post의 id 같나 확인
+
+      // _.map((post) => post.id) === _.pluck("id") 로 대체
+      // _.filter(posts, (post) => post.userId === targetUserId) === _.where(posts, {id:targetId}) 로 대체
+
+      _.go(
+        _.where(posts, { userId: targetUserId }),
+        _.pluck("id"),
+        (postsIds) => {
+          return _.filter(comments, (comment) => {
+            return _.contains(postsIds, comment.postId);
+          });
+        },
+        console.log
+      );
+
+      // 2. 특정인의 posts에 comments를 단 친구의 이름들 뽑기
+    </script>
+  </body>
+</html>
