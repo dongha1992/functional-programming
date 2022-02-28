@@ -41,6 +41,7 @@
         { id: 308, body: "댓글8", userId: 2, postId: 202 },
         { id: 309, body: "댓글9", userId: 3, postId: 201 },
         { id: 309, body: "댓글10", userId: 3, postId: 208 },
+        { id: 310, body: "댓글11", userId: 1, postId: 208 },
       ];
 
       const products = [
@@ -73,6 +74,15 @@
 
       const targetUserId = 1;
 
+      const postsBy = (attr) => {
+        return _.where(posts, attr);
+      };
+
+      const commentsByPosts = _.pipe(_.pluck("id"), (postsIds) => {
+        return _.filter(comments, (comment) => {
+          return _.contains(postsIds, comment.postId);
+        });
+      });
       // 1. 특정인의 posts의 모든 comments 거르기
 
       // posts에서 특정 유저의 post 찾기
@@ -82,18 +92,22 @@
       // _.map((post) => post.id) === _.pluck("id") 로 대체
       // _.filter(posts, (post) => post.userId === targetUserId) === _.where(posts, {id:targetId}) 로 대체
 
-      _.go(
-        _.where(posts, { userId: targetUserId }),
-        _.pluck("id"),
-        (postsIds) => {
-          return _.filter(comments, (comment) => {
-            return _.contains(postsIds, comment.postId);
-          });
-        },
-        console.log
-      );
+      _.go({ userId: targetUserId }, postsBy, commentsByPosts, console.log);
 
       // 2. 특정인의 posts에 comments를 단 친구의 이름들 뽑기
+
+      _.go(
+        { userId: targetUserId },
+        postsBy,
+        commentsByPosts,
+        _.map((comment) => {
+          return _.find(users, (user) => {
+            return user.id === comment.userId;
+          }).name;
+        }),
+        _.uniq,
+        console.log
+      );
     </script>
   </body>
 </html>
