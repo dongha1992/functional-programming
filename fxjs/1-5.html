@@ -35,6 +35,41 @@
           sizes: [{ name: "L", quantity: 4, price: 0 }],
         },
       ];
+
+      /* 1. 모든 수량 구하기 */
+
+      const getTotalQuantity = _.reduce((totalQ, product) => {
+        return _.reduce(
+          product.sizes,
+          (totalQ, size) => {
+            return totalQ + size.quantity;
+          },
+          totalQ
+        );
+      }, 0);
+
+      /* 2. isSelected 만 더하기 */
+
+      _.go(
+        products,
+        _.filter(_get("isSelected")),
+        getTotalQuantity,
+        console.log
+      );
+
+      /* 3. 모든 가격 더하기 */
+
+      const getTotalPrice = _.reduce((totalP, product) => {
+        return _.reduce(
+          product.sizes,
+          (totalP, size) => {
+            return totalP + (product.price + size.price) * size.quantity;
+          },
+          totalP
+        );
+      }, 0);
+
+      _.go(products, getTotalPrice, console.log);
     </script>
   </body>
 </html>
