@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>비동기 예제</title>
+    <script src="./_.js"></script>
+    <script src="./partial.js"></script>
+  </head>
+  <body>
+    <script>
+      const square = (a) => {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve(a * a);
+          }, 500);
+        });
+      };
+
+      // _.go(square(10), square, square, square, console.log);
+
+      /* 재귀 사용 */
+
+      const list = [1, 2, 3, 4];
+
+      new Promise((resolve) => {
+        // 1. 즉시실행함수 recur를 만듦
+        (function recur(res) {
+          // 2. base 조건
+          if (list.length === res.length) {
+            return resolve(res);
+          }
+          square(list[res.length]).then((val) => {
+            console.log(res);
+            res.push(val);
+            recur(res);
+          });
+        })([]);
+      });
+
+      /* 함수형으로 비동기 제어 */
+
+      _.go(list, _.map(square), console.log);
+    </script>
+  </body>
+</html>
