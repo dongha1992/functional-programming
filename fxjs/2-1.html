@@ -2,11 +2,32 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>함수형 강의2</title>
+    <title>함수형 강의2 - 이터러블</title>
     <script src="./_.js"></script>
     <script src="./partial.js"></script>
   </head>
   <body>
-    <script></script>
+    <script>
+      const log = console.log;
+      const times = (f, n) => {
+        let i = -1;
+        while (++i < n) {
+          f(i);
+        }
+      };
+      times(log, 3);
+
+      /* 이터러블 */
+      const arr = [1, 2, 3];
+      arr[Symbol.iterator]; // values()
+      const iterator = arr[Symbol.iterator]();
+      iterator.next(); // {value:1, done:false}
+
+      /* 이터러블/이터레이터 프로토콜
+       * 이터러블 : 이터레이터를 리턴하는 arr[Symbol.iterator]()를 가진 값
+       * 이터레이터 : {value, done} 객체를 리턴하는 next()를 가진 값
+       * 이터러블/이터레이터 프로토콜 : 이터러블을 for ...of, 전개 연산자 등 함꼐 동작하도록 한 규약
+       */
+    </script>
   </body>
 </html>

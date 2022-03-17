@@ -40,6 +40,41 @@
       /* 함수형으로 비동기 제어 */
 
       _.go(list, _.map(square), console.log);
+
+      const menuDetails = [
+        {
+          id: 446,
+          name: "아이스 엿구마(2봉)",
+          price: 5700,
+          discountPrice: 100,
+          main: true,
+        },
+        {
+          id: 511,
+          name: "아이스 엿구마(1봉)",
+          price: 3000,
+          discountPrice: 200,
+          main: true,
+        },
+        {
+          id: 447,
+          name: "아이스 엿구마(5봉)",
+          price: 13200,
+          discountPrice: 4000,
+          main: true,
+        },
+      ];
+
+      _.go(
+        menuDetails,
+        _.map((item) => {
+          return {
+            dicount: (item.discountPrice / item.price) * 100,
+            price: item.price,
+          };
+        }),
+        console.log
+      );
     </script>
   </body>
 </html>
