@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>함수형 강의2 - 제너레이터</title>
+    <script src="./_.js"></script>
+    <script src="./partial.js"></script>
+  </head>
+  <body>
+    <script>
+      const log = console.log;
+
+      /* 제너레이터 */
+
+      function* gen() {
+        yield 1;
+        yield 2;
+        yield 3;
+        return 100;
+      }
+      let iter = gen();
+      iter.next();
+
+      /* 제너레이터를 이용한 예제 */
+
+      function* infinity(i = 0) {
+        while (true) yield i++;
+      }
+
+      function* limit(l, iter) {
+        for (const a of iter) {
+          yield a;
+          if (a === l) return;
+        }
+      }
+
+      function* odds(l) {
+        for (const a of limit(l, infinity(1))) {
+          if (a % 2) yield a;
+        }
+      }
+      const oddIter = odds(10);
+    </script>
+  </body>
+</html>
