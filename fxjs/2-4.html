@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>함수형 강의2 - map/filter/reduce</title>
+    <title>함수형 강의2 - curry</title>
     <script src="./_.js"></script>
     <script src="./fx.js"></script>
   </head>
@@ -17,6 +17,33 @@
         { name: "후드티", price: 30000, quantity: 4 },
         { name: "바지", price: 25000, quantity: 5 },
       ];
+
+      /* curry 사용 시 장점 */
+
+      // 아래 코드를 curry 적용하면
+
+      F.go(
+        products,
+        (products) => F.filter((p) => p.price < 20000, products),
+        (products) => F.map((p) => p.price, products)
+      );
+
+      // 이렇게 변환이 가능하다.
+      // 결국 평가가 되는 함수의 중복을 줄일 수 있음 (?)
+
+      F.go(
+        products,
+        (products) => F.filter((p) => p.price < 20000)(products),
+        (products) => F.map((p) => p.price)(products)
+      );
+
+      // 이렇게 수정 가능
+
+      F.go(
+        products,
+        F.filter((p) => p.price < 20000),
+        F.map((p) => p.price)
+      );
     </script>
   </body>
 </html>

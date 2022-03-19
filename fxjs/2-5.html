@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>함수형 강의2 - Lazy</title>
+    <script src="./_.js"></script>
+    <script src="./fx.js"></script>
+  </head>
+  <body>
+    <script>
+      const log = console.log;
+
+      const products = [
+        { name: "반팔티", price: 15000, quantity: 1 },
+        { name: "긴팔티", price: 20000, quantity: 2 },
+        { name: "핸드폰케이스", price: 15000, quantity: 3 },
+        { name: "후드티", price: 30000, quantity: 4 },
+        { name: "바지", price: 25000, quantity: 5 },
+      ];
+
+      /* L.range 테스트 */
+      const add = (a, b) => a + b;
+
+      function test(name, time, f) {
+        console.time(name);
+        while (time--) {
+          f();
+        }
+        console.timeEnd(name);
+      }
+
+      test("F.range", 1, () => F.take(10, F.range(1000000)));
+      test("L.range", 1, () => F.take(10, L.range(1000000)));
+    </script>
+  </body>
+</html>

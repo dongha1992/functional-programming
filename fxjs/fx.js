@@ -1,13 +1,19 @@
+const curryFn =
+  (fn) =>
+  (arg, ...args) => {
+    return args.length ? fn(arg, ...args) : (...args) => fn(args, ...args);
+  };
+
 const F = {
-  map: (fn, iter) => {
+  map: curryFn((fn, iter) => {
     const res = [];
     for (const a of iter) {
       res.push(fn(a));
     }
     return res;
-  },
+  }),
 
-  filter: (predi, iter) => {
+  filter: curryFn((predi, iter) => {
     const res = [];
     for (const a of iter) {
       if (predi(a)) {
@@ -15,9 +21,9 @@ const F = {
       }
     }
     return res;
-  },
+  }),
 
-  reduce: (fn, acc, iter) => {
+  reduce: curryFn((fn, acc, iter) => {
     // 초기값을 iter의 첫 번째 값으로 가짐
     if (!iter) {
       iter = acc[Symbol.iterator]();
@@ -28,7 +34,7 @@ const F = {
       acc = fn(acc, a);
     }
     return acc;
-  },
+  }),
 
   go: (...args) => {
     return F.reduce((a, fn) => {
@@ -44,4 +50,33 @@ const F = {
     (...args) => {
       return F.go(fn(...args), ...fns);
     },
+
+  range: (l) => {
+    let i = -1;
+    let res = [];
+    while (++i < l) {
+      res.push(i);
+    }
+    return res;
+  },
+
+  take: (l, iter) => {
+    let res = [];
+    for (const a of iter) {
+      res.push(a);
+      if (res.length === l) {
+        return res;
+      }
+    }
+    return res;
+  },
+};
+
+const L = {
+  range: function* (l) {
+    let i = -1;
+    while (++i < l) {
+      yield i;
+    }
+  },
 };
