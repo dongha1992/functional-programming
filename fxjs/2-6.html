@@ -17,6 +17,15 @@
         { name: "후드티", price: 30000, quantity: 4 },
         { name: "바지", price: 25000, quantity: 5 },
       ];
+
+      log(
+        F.go(
+          F.range(1000),
+          F.map((n) => n + 10),
+          F.filter((n) => n % 2),
+          F.take(2)
+        )
+      );
     </script>
   </body>
 </html>

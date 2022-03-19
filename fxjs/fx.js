@@ -1,21 +1,33 @@
 const curryFn =
   (fn) =>
   (arg, ...args) => {
-    return args.length ? fn(arg, ...args) : (...args) => fn(args, ...args);
+    return args.length ? fn(arg, ...args) : (...args) => fn(arg, ...args);
   };
 
 const F = {
   map: curryFn((fn, iter) => {
-    const res = [];
-    for (const a of iter) {
+    let res = [];
+
+    // 위 코드 명령형으로 작성
+
+    iter = iter[Symbol.iterator]();
+    let cur;
+
+    while (!(cur = iter.next()).done) {
+      const a = cur.value;
       res.push(fn(a));
     }
     return res;
   }),
 
   filter: curryFn((predi, iter) => {
-    const res = [];
-    for (const a of iter) {
+    let res = [];
+
+    iter = iter[Symbol.iterator]();
+    let cur;
+
+    while (!(cur = iter.next()).done) {
+      const a = cur.value;
       if (predi(a)) {
         res.push(a);
       }
@@ -28,9 +40,13 @@ const F = {
     if (!iter) {
       iter = acc[Symbol.iterator]();
       acc = iter.next().value;
+    } else {
+      iter = iter[Symbol.iterator]();
     }
 
-    for (const a of iter) {
+    let cur;
+    while (!(cur = iter.next()).done) {
+      const a = cur.value;
       acc = fn(acc, a);
     }
     return acc;
@@ -60,16 +76,21 @@ const F = {
     return res;
   },
 
-  take: (l, iter) => {
+  take: curryFn((l, iter) => {
     let res = [];
-    for (const a of iter) {
+
+    iter = iter[Symbol.iterator]();
+    let cur;
+
+    while (!(cur = iter.next()).done) {
+      const a = cur.value;
       res.push(a);
       if (res.length === l) {
         return res;
       }
     }
     return res;
-  },
+  }),
 };
 
 const L = {
@@ -79,4 +100,26 @@ const L = {
       yield i;
     }
   },
+
+  map: curryFn(function* (fn, iter) {
+    iter = iter[Symbol.iterator]();
+    let cur;
+
+    while (!(cur = iter.next()).done) {
+      const a = cur.value;
+      yield fn(a);
+    }
+  }),
+
+  filter: curryFn(function* (fn, iter) {
+    iter = iter[Symbol.iterator]();
+    let cur;
+
+    while (!(cur = iter.next()).done) {
+      const a = cur.value;
+      if (fn(a)) {
+        yield a;
+      }
+    }
+  }),
 };
