@@ -19,9 +19,13 @@
           }, 100)
         );
 
-      const go1 = (a, fn) => {
-        return a instanceof Promise ? a.then(fn) : fn(a);
-      };
+      F.go(
+        Promise.resolve(100),
+        (a) => a + 10,
+        (a) => Promise.resolve(a + 100),
+        (a) => a + 100,
+        log
+      );
     </script>
   </body>
 </html>

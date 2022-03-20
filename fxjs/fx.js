@@ -33,6 +33,10 @@ const F = {
     return res;
   }),
 
+  go1: (a, fn) => {
+    return a instanceof Promise ? a.then(fn) : fn(a);
+  },
+
   reduce: curryFn((fn, acc, iter) => {
     // 초기값을 iter의 첫 번째 값으로 가짐
     if (!iter) {
@@ -42,12 +46,29 @@ const F = {
       iter = iter[Symbol.iterator]();
     }
 
-    let cur;
-    while (!(cur = iter.next()).done) {
-      const a = cur.value;
-      acc = fn(acc, a);
-    }
-    return acc;
+    // Promise 경우, 재귀를 이용해야함 안 그러면 Promise 체인에 물려서
+    // 다음 값은 동기적 처리해야 하는데 Promise로 하게 되면 성능 저하
+
+    // while (!(cur = iter.next()).done) {
+    //   const a = cur.value;
+    //   // acc = fn(acc, a);
+    //   acc = acc instanceof Promise ? acc.then((acc) => fn(acc, a)) : fn(acc, a);
+    // }
+    // return acc;
+
+    // Promise 방어 재귀로 수정
+
+    return F.go1(acc, function recur(acc) {
+      let cur;
+      while (!(cur = iter.next()).done) {
+        const a = cur.value;
+        acc = fn(acc, a);
+        if (acc instanceof Promise) {
+          return acc.then(recur);
+        }
+      }
+      return acc;
+    });
   }),
 
   go: (...args) => {
