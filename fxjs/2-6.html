@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>함수형 강의2 - 지연평가 심화</title>
+    <title>함수형 강의2 - reduce 응용 - queryStr</title>
     <script src="./_.js"></script>
     <script src="./fx.js"></script>
   </head>
@@ -10,22 +10,21 @@
     <script>
       const log = console.log;
 
-      const products = [
-        { name: "반팔티", price: 15000, quantity: 1 },
-        { name: "긴팔티", price: 20000, quantity: 2 },
-        { name: "핸드폰케이스", price: 15000, quantity: 3 },
-        { name: "후드티", price: 30000, quantity: 4 },
-        { name: "바지", price: 25000, quantity: 5 },
-      ];
+      const query = {
+        limit: 10,
+        offset: 10,
+        type: "notice",
+      };
 
-      log(
+      const queryStr = (obj) =>
         F.go(
-          F.range(1000),
-          F.map((n) => n + 10),
-          F.filter((n) => n % 2),
-          F.take(2)
-        )
-      );
+          obj,
+          L.entries,
+          F.map(([k, v]) => `${k}=${v}`),
+          F.join("&")
+        );
+
+      log(queryStr(query));
     </script>
   </body>
 </html>

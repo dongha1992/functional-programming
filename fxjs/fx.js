@@ -91,6 +91,12 @@ const F = {
     }
     return res;
   }),
+
+  join: curryFn((sep = ",", iter) => {
+    return F.reduce((a, b) => {
+      return `${a}${sep}${b}`;
+    }, iter);
+  }),
 };
 
 const L = {
@@ -122,4 +128,10 @@ const L = {
       }
     }
   }),
+
+  entries: function* (obj) {
+    for (const k in obj) {
+      yield [k, obj[k]];
+    }
+  },
 };
