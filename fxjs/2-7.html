@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>함수형 강의2 - reduce 응용 - flatten, L.flatten</title>
+    <script src="./_.js"></script>
+    <script src="./fx.js"></script>
+  </head>
+  <body>
+    <script>
+      const log = console.log;
+
+      const flatted = F.pipe(L.deepFlat, F.take(Infinity));
+      log(flatted([1, 2, 3, 4, [5, 6, [7, 8]]]));
+    </script>
+  </body>
+</html>

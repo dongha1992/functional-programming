@@ -8,8 +8,6 @@ const F = {
   map: curryFn((fn, iter) => {
     let res = [];
 
-    // 위 코드 명령형으로 작성
-
     iter = iter[Symbol.iterator]();
     let cur;
 
@@ -97,6 +95,12 @@ const F = {
       return `${a}${sep}${b}`;
     }, iter);
   }),
+
+  isIterable: (a) => {
+    return a && a[Symbol.iterator];
+  },
+
+  flatten: curryFn(() => {}),
 };
 
 const L = {
@@ -108,22 +112,38 @@ const L = {
   },
 
   map: curryFn(function* (fn, iter) {
-    iter = iter[Symbol.iterator]();
-    let cur;
+    // 1.
 
-    while (!(cur = iter.next()).done) {
-      const a = cur.value;
+    // iter = iter[Symbol.iterator]();
+    // let cur;
+
+    // while (!(cur = iter.next()).done) {
+    //   const a = cur.value;
+    //   yield fn(a);
+    // }
+
+    // 2.
+
+    for (const a of iter) {
       yield fn(a);
     }
   }),
 
-  filter: curryFn(function* (fn, iter) {
-    iter = iter[Symbol.iterator]();
-    let cur;
+  filter: curryFn(function* (predi, iter) {
+    // 1.
+    // iter = iter[Symbol.iterator]();
+    // let cur;
+    // while (!(cur = iter.next()).done) {
+    //   const a = cur.value;
+    //   if (predi(a)) {
+    //     yield a;
+    //   }
+    // }
 
-    while (!(cur = iter.next()).done) {
-      const a = cur.value;
-      if (fn(a)) {
+    // 2.
+
+    for (const a of iter) {
+      if (predi(a)) {
         yield a;
       }
     }
@@ -134,4 +154,29 @@ const L = {
       yield [k, obj[k]];
     }
   },
+
+  flatten: function* (iter) {
+    for (const a of iter) {
+      if (F.isIterable(a)) {
+        // for (const b of a) yield b;
+        yield* a;
+      } else {
+        yield a;
+      }
+    }
+  },
+  deepFlat: function* f(iter) {
+    for (const a of iter) {
+      if (F.isIterable(a)) {
+        yield* f(a);
+      } else {
+        yield a;
+      }
+    }
+  },
+  flatMap: function* (iter) {},
 };
+
+const mapByLazy = curryFn(F.pipe(L.map, F.take(Infinity)));
+
+const filterByLazy = curryFn(F.pipe(L.filter, F.take(Infinity)));
