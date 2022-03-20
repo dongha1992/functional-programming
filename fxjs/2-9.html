@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>함수형 강의2 - 비동기 프로그래밍 go/pipe/reduce</title>
+    <script src="./_.js"></script>
+    <script src="./fx.js"></script>
+  </head>
+  <body>
+    <script>
+      const log = console.log;
+
+      /* 값으로 Promise 활용 */
+
+      const delay100 = (a) =>
+        new Promise((resolve) =>
+          setTimeout(() => {
+            return resolve(a);
+          }, 100)
+        );
+
+      const go1 = (a, fn) => {
+        return a instanceof Promise ? a.then(fn) : fn(a);
+      };
+    </script>
+  </body>
+</html>

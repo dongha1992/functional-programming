@@ -100,7 +100,13 @@ const F = {
     return a && a[Symbol.iterator];
   },
 
-  flatten: curryFn(() => {}),
+  find: curryFn((predi, iter) => {
+    for (const a of iter) {
+      if (predi(a)) {
+        return a;
+      }
+    }
+  }),
 };
 
 const L = {
@@ -180,3 +186,7 @@ const L = {
 const mapByLazy = curryFn(F.pipe(L.map, F.take(Infinity)));
 
 const filterByLazy = curryFn(F.pipe(L.filter, F.take(Infinity)));
+
+// flatMap은 함수의 조합으로 구현 가능
+
+const flatMapByPipe = curryFn(F.pipe(L.map, L.flatten));

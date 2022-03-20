@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>함수형 강의2 - 비동기 프로그래밍</title>
+    <script src="./_.js"></script>
+    <script src="./fx.js"></script>
+  </head>
+  <body>
+    <script>
+      const log = console.log;
+
+      /* 값으로 Promise 활용 */
+
+      const delay100 = (a) =>
+        new Promise((resolve) =>
+          setTimeout(() => {
+            return resolve(a);
+          }, 100)
+        );
+
+      const go1 = (a, fn) => {
+        return a instanceof Promise ? a.then(fn) : fn(a);
+      };
+
+      const add5 = (a) => a + 5;
+      // promise로 들어오는 값도 처리하고 싶음
+      const result = go1(delay100(10), add5);
+      result.then((a) => console.log(a));
+
+      /* Composition, 합수를 합성할 때 안전하게 하기 위해서 모나드 사용 */
+
+      /* f . g
+       * f(g(x))
+       */
+
+      // const g = (a) => a + 1;
+      // const f = (a) => a * a;
+
+      // f(g(1));
+      // f(g()); // NaN -> 적절하지 않은 결과에 대해서는 출력하고 싶지 않음
+
+      // 모나드는 하나의 박스임. 함수를 통해서 서로를 합성함
+
+      // [1]
+      //   .map(g)
+      //   .map(f)
+      //   .forEach((a) => log(a));
+
+      /* Kleisli Composition 관점에서 Promise, 오류가 있을 수 있는 상항에서 안전하게 해줌 */
+
+      // f . g
+      // f(g(x)) = f(g(x))
+
+      const data = [
+        {
+          id: 1,
+          name: "aa",
+        },
+        { id: 2, name: "bb" },
+        { id: 3, name: "cc" },
+      ];
+
+      const getUserById = (id) =>
+        F.find((a) => a.id === id, data) || Promise.reject("not found");
+      const f = ({ name }) => name;
+      const g = getUserById;
+
+      // const fg = (id) => f(g(id));
+
+      // 외부 효과로 결과가 항상 동일하지 않을 수 있음
+
+      // log(fg(1));
+      // data.pop();
+      // log(fg(1));
+
+      /* 안전하게 함수 합성하기 */
+
+      const fg = (id) => Promise.resolve(id).then(g).then(f);
+
+      fg(3).then((a) => log(a));
+    </script>
+  </body>
+</html>

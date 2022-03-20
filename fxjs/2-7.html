@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>함수형 강의2 - reduce 응용 - flatten, L.flatten</title>
+    <title>함수형 강의2 - reduce 응용 - flatten, L.flatten, L.flatMap</title>
     <script src="./_.js"></script>
     <script src="./fx.js"></script>
   </head>
@@ -12,6 +12,18 @@
 
       const flatted = F.pipe(L.deepFlat, F.take(Infinity));
       log(flatted([1, 2, 3, 4, [5, 6, [7, 8]]]));
+
+      // flatten과 map의 조합으로 flatMap 구현 가능
+      log(
+        ...flatMapByPipe(
+          F.map((a) => a * 10),
+          [
+            [1, 2],
+            [3, 4],
+            [5, 6],
+          ]
+        )
+      );
     </script>
   </body>
 </html>
