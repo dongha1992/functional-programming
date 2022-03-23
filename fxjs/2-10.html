@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>함수형 강의2 - Promise + L.map/map/take</title>
+    <title>함수형 강의2 - 지연평가 + 비동기 동시성</title>
     <script src="./_.js"></script>
     <script src="./fx.js"></script>
   </head>
@@ -12,8 +12,9 @@
 
       F.go(
         F.range(10),
-        L.map((a) => a + 1),
-        F.take(1),
+        L.map((a) => Promise.resolve(a * a)),
+        L.filter((a) => a % 2),
+        F.take(2),
         log
       );
     </script>

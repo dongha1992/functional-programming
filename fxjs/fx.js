@@ -134,9 +134,11 @@ const F = {
         const a = cur.value;
 
         if (a instanceof Promise) {
-          return a.then((a) => {
-            return (res.push(a), res).length === l ? res : recur();
-          });
+          return a
+            .then((a) => {
+              return (res.push(a), res).length === l ? res : recur();
+            })
+            .catch((e) => (e === nop ? recur() : Promise.reject("error")));
         }
         res.push(a);
         if (res.length === l) {
@@ -206,8 +208,13 @@ const L = {
     // 2.
 
     for (const a of iter) {
-      if (predi(a)) {
-        yield a;
+      const b = F.go1(a, predi);
+      if (b instanceof Promise) {
+        yield b.then((b) => (b ? a : Promise.reject(nop)));
+      } else {
+        if (b) {
+          yield a;
+        }
       }
     }
   }),
@@ -247,3 +254,5 @@ const filterByLazy = curryFn(F.pipe(L.filter, F.take(Infinity)));
 // flatMap은 함수의 조합으로 구현 가능
 
 const flatMapByPipe = curryFn(F.pipe(L.map, L.flatten));
+
+const nop = Symbol("nop");
