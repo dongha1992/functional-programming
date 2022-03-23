@@ -9,6 +9,13 @@
   <body>
     <script>
       const log = console.log;
+
+      F.go(
+        F.range(10),
+        L.map((a) => a + 1),
+        F.take(1),
+        log
+      );
     </script>
   </body>
 </html>

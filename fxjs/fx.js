@@ -57,6 +57,7 @@ const F = {
     // return acc;
 
     // Promise 방어 재귀로 수정
+    // go1으로 묶는 이유는 첫 번째가 인자가 promise인 경우 때문에
 
     return F.go1(acc, function recur(acc) {
       let cur;
@@ -99,16 +100,51 @@ const F = {
     let res = [];
 
     iter = iter[Symbol.iterator]();
-    let cur;
 
-    while (!(cur = iter.next()).done) {
-      const a = cur.value;
-      res.push(a);
-      if (res.length === l) {
-        return res;
+    /* 재귀를 통해 Promise 검사 */
+
+    // return (function recur() {
+    //   let cur;
+    //   while (!(cur = iter.next()).done) {
+    //     const a = cur.value;
+
+    //     if (a instanceof Promise) {
+    //       return a.then((a) => {
+    //         res.push(a);
+    //         if (res.length === l) {
+    //           return res;
+    //         } else {
+    //           return recur();
+    //         }
+    //       });
+    //     }
+    //     res.push(a);
+    //     if (res.length === l) {
+    //       return res;
+    //     }
+    //   }
+    //   return res;
+    // })();
+
+    /* 리팩토링 */
+
+    return (function recur() {
+      let cur;
+      while (!(cur = iter.next()).done) {
+        const a = cur.value;
+
+        if (a instanceof Promise) {
+          return a.then((a) => {
+            return (res.push(a), res).length === l ? res : recur();
+          });
+        }
+        res.push(a);
+        if (res.length === l) {
+          return res;
+        }
       }
-    }
-    return res;
+      return res;
+    })();
   }),
 
   join: curryFn((sep = ",", iter) => {
@@ -152,7 +188,7 @@ const L = {
     // 2.
 
     for (const a of iter) {
-      yield fn(a);
+      yield F.go1(a, fn);
     }
   }),
 
