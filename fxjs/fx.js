@@ -243,7 +243,21 @@ const L = {
 };
 
 const C = {
-  reduce: () => {},
+  reduce: curryFn((fn, acc, iter) => {
+    const iter2 = iter ? [...iter] : [...acc];
+
+    // promise.reject 관련 처리 해야함
+    // catch를 하지 않은 promise를 전달해야함
+    iter2.forEach((a) => a.catch(function () {}));
+    // iter가 있을 때와 없을 때 구분
+    // 한번에 iter를 다 실행시킴
+
+    return iter ? F.reduce(fn, acc, iter2) : F.reduce(fn, iter2);
+  }),
+
+  take: curryFn((l, iter) => {
+    return F.take(l, catchNoop([...iter]));
+  }),
 };
 
 const mapByLazy = curryFn(F.pipe(L.map, F.take(Infinity)));
@@ -266,3 +280,8 @@ const reduceHelper = (acc, a, fn) => {
 };
 
 const head = (iter) => F.go1(F.take(1, iter), ([h]) => h);
+
+const noop = () => {};
+const catchNoop = (arr) => (
+  arr.forEach((a) => (a instanceof Promise ? a.catch(noop) : a)), arr
+);

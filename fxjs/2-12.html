@@ -21,7 +21,7 @@
         [1, 2, 3, 4, 5],
         L.map((a) => delay500(a * a)),
         L.filter((a) => a % 2),
-        F.reduce((a, b) => a + b),
+        C.take(1),
         log
       );
 
