@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>함수형 강의2 - 동시성 지원 reduce / promise 효율</title>
+    <script src="./_.js"></script>
+    <script src="./fx.js"></script>
+  </head>
+  <body>
+    <script>
+      const log = console.log;
+
+      // F.go(
+      //   [1, 2, 3, 4],
+      //   L.map((a) => Promise.resolve(a * a)),
+      //   L.filter((a) => Promise.resolve(a % 2)),
+      //   F.reduce((a, b) => a + b),
+      //   log
+      // );
+
+      F.go(
+        [1, 2, 3, 4, 5, 6, 7, 8, 9],
+        L.map(
+          (a) =>
+            new Promise((res) =>
+              setTimeout(() => {
+                res(a * a);
+              }, 500)
+            )
+        ),
+        L.filter((a) => a % 2),
+        F.take(5),
+        log // 총 500 * 5 밀리세컨드가 걸림
+      );
+    </script>
+  </body>
+</html>

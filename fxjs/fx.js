@@ -39,12 +39,9 @@ const F = {
 
   reduce: curryFn((fn, acc, iter) => {
     // 초기값을 iter의 첫 번째 값으로 가짐
-    if (!iter) {
-      iter = acc[Symbol.iterator]();
-      acc = iter.next().value;
-    } else {
-      iter = iter[Symbol.iterator]();
-    }
+    if (!iter) return F.reduce(fn, head((iter = acc[Symbol.iterator]())), iter);
+
+    iter = iter[Symbol.iterator]();
 
     // Promise 경우, 재귀를 이용해야함 안 그러면 Promise 체인에 물려서
     // 다음 값은 동기적 처리해야 하는데 Promise로 하게 되면 성능 저하
@@ -62,12 +59,12 @@ const F = {
     return F.go1(acc, function recur(acc) {
       let cur;
       while (!(cur = iter.next()).done) {
-        const a = cur.value;
-        acc = fn(acc, a);
+        acc = reduceHelper(acc, cur.value, fn);
         if (acc instanceof Promise) {
           return acc.then(recur);
         }
       }
+
       return acc;
     });
   }),
@@ -126,7 +123,7 @@ const F = {
     //   return res;
     // })();
 
-    /* 리팩토링 */
+    /* 아래는 리팩토링 */
 
     return (function recur() {
       let cur;
@@ -211,10 +208,8 @@ const L = {
       const b = F.go1(a, predi);
       if (b instanceof Promise) {
         yield b.then((b) => (b ? a : Promise.reject(nop)));
-      } else {
-        if (b) {
-          yield a;
-        }
+      } else if (b) {
+        yield a;
       }
     }
   }),
@@ -247,6 +242,10 @@ const L = {
   flatMap: function* (iter) {},
 };
 
+const C = {
+  reduce: () => {},
+};
+
 const mapByLazy = curryFn(F.pipe(L.map, F.take(Infinity)));
 
 const filterByLazy = curryFn(F.pipe(L.filter, F.take(Infinity)));
@@ -256,3 +255,14 @@ const filterByLazy = curryFn(F.pipe(L.filter, F.take(Infinity)));
 const flatMapByPipe = curryFn(F.pipe(L.map, L.flatten));
 
 const nop = Symbol("nop");
+
+const reduceHelper = (acc, a, fn) => {
+  return a instanceof Promise
+    ? a.then(
+        (a) => fn(acc, a),
+        (e) => (e == nop ? acc : Promise.reject("error"))
+      )
+    : fn(acc, a);
+};
+
+const head = (iter) => F.go1(F.take(1, iter), ([h]) => h);

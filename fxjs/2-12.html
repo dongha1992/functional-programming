@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>함수형 강의2 - 병렬적인 로직</title>
+    <script src="./_.js"></script>
+    <script src="./fx.js"></script>
+  </head>
+  <body>
+    <script>
+      const log = console.log;
+
+      const delay500 = (a) =>
+        new Promise((res) =>
+          setTimeout(() => {
+            return res(a);
+          }, 500)
+        );
+
+      F.go(
+        [1, 2, 3, 4, 5],
+        L.map((a) => delay500(a * a)),
+        L.filter((a) => a % 2),
+        F.reduce((a, b) => a + b),
+        log
+      );
+
+      // 즉시 병렬적으로 평가하기 C.map, C.filter
+    </script>
+  </body>
+</html>
