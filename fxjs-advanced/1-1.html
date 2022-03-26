@@ -3,11 +3,94 @@
   <head>
     <meta charset="UTF-8" />
     <title>함수형 강의 응용편</title>
-    <script src="../lib/fx.js"></script>
+    <script src="https://unpkg.com/fxjs/dist/fx.js"></script>
   </head>
   <body>
     <script>
       const log = console.log;
+      const { L, C } = window._;
+      const list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+      /* 홀수 n개 제곱 후 모두 더하기 */
+
+      // 일반적인 함수 작성
+
+      const f1 = (limit, list) => {
+        let acc = 0;
+        for (const a of list) {
+          if (a % 2) {
+            const b = a * a;
+            acc += b;
+            if (--limit === 0) break;
+          }
+        }
+        return acc;
+      };
+
+      // 1. if는 filter 로
+      // 2. 변화한 값을 할당하는 것은 map으로
+      // 3. break는 take
+      // 4. 축약 및 합산은 reduce
+
+      const add = (a, b) => a + b;
+      const f2 = (limit, list) => {
+        return _.reduce(
+          add,
+          L.take(
+            limit,
+            L.map(
+              (a) => a * a,
+              L.filter((a) => a % 2, list)
+            )
+          )
+        );
+      };
+
+      f2(3, list);
+
+      // go를 이용해서 가독성
+
+      const f3 = (limit, list) => {
+        return _.go(
+          list,
+          L.filter((a) => a % 2),
+          L.map((a) => a * a),
+          L.take(limit),
+          _.reduce(add),
+          log
+        );
+      };
+      f3(3, list);
+
+      /* while을 range로 */
+
+      // 일반적 코드 작성
+
+      const f4 = (end) => {
+        let i = 1;
+
+        // while (i < end) {
+        //   ++i;
+        // }
+
+        /* +=2 씩해서 효율적으로 코드 작성 가능 */
+        while (i < end) {
+          i += 2;
+        }
+      };
+
+      f4(10);
+
+      // 함수형으로 수정
+      // 함수형은 순수한 영역과 외부 효과를 주는 영역이 있음
+
+      const f5 = (end) => {
+        _.each(log, L.range(1, end, 2));
+      };
+
+      f5(10);
+
+      /* 별 그리기, 구구단 */
     </script>
   </body>
 </html>
