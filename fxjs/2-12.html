@@ -17,15 +17,25 @@
           }, 500)
         );
 
-      F.go(
-        [1, 2, 3, 4, 5],
-        L.map((a) => delay500(a * a)),
-        L.filter((a) => a % 2),
-        C.take(1),
-        log
-      );
+      // F.go(
+      //   [1, 2, 3, 4, 5],
+      //   L.map((a) => delay500(a * a)),
+      //   L.filter((a) => a % 2),
+      //   C.take(1),
+      //   log
+      // );
 
       // 즉시 병렬적으로 평가하기 C.map, C.filter
+
+      // F.map((a) => delay500(a * a), [1, 2, 3, 4]);
+      // mapByCon((a) => delay500(a * a), [1, 2, 3, 4]).then(log);
+
+      // 병렬 조합
+
+      F.go(
+        [1, 2, 3, 4, 5, 6, 7, 8],
+        F.map((a) => delay500(a * a), F.filter)
+      );
     </script>
   </body>
 </html>
