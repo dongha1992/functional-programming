@@ -60,7 +60,7 @@
           log
         );
       };
-      f3(3, list);
+      // f3(3, list);
 
       /* while을 range로 */
 
@@ -79,18 +79,80 @@
         }
       };
 
-      f4(10);
+      // f4(10);
 
       // 함수형으로 수정
       // 함수형은 순수한 영역과 외부 효과를 주는 영역이 있음
 
-      const f5 = (end) => {
-        _.each(log, L.range(1, end, 2));
+      // const f5 = (end) => {
+      //   _.each(log, L.range(1, end, 2));
+      // };
+
+      // f5(10);
+
+      /* 별 그리기 */
+
+      // 1. 그냥 별 그리기
+
+      const result = [];
+
+      const main = () => {
+        for (let i = 0; i < 5; i++) {
+          let temp = [];
+          for (let j = i; j < 5; j++) {
+            temp.push("*");
+          }
+          result.push(temp.join(""));
+        }
+        result.reverse();
       };
 
-      f5(10);
+      main();
 
-      /* 별 그리기, 구구단 */
+      // 2. 함수형으로 별그리기
+
+      const join = (sep) => _.reduce();
+      _.go(
+        L.range(1, 6),
+        _.map(_.range),
+        _.map(_.map((_) => "*")),
+        _.map(_.reduce((a, b) => `${a}${b}`)),
+        _.reduce((a, b) => `${a}\n${b}`)
+      );
+
+      /* 구구단 */
+
+      // 1. 일반적인 함수로 작성
+
+      const main2 = () => {
+        const result2 = [];
+        for (let i = 2; i <= 9; i++) {
+          result2.push(i);
+        }
+
+        const answer = [];
+        for (let i = 2; i <= result2.length + 1; i++) {
+          for (let j = 2; j <= result2.length + 1; j++) {
+            const str = `${i}x${j}=${i * j}`;
+            answer.push(str);
+          }
+        }
+        return answer;
+      };
+
+      log(main2());
+
+      // 2. 함수형으로 구구단하기
+      _.go(
+        _.range(2, 10),
+        _.map((a) =>
+          _.go(
+            _.range(1, 10),
+            _.map((b) => `${a}x${b}=${a * b}`),
+            _.join("\n")
+          )
+        )
+      );
     </script>
   </body>
 </html>

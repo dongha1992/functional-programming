@@ -78,17 +78,6 @@
         return _.pluck(key, list);
       });
 
-      const indexByKey = (list, key) => {
-        return _.go(
-          list,
-          _.indexBy((a) => a[key])
-        );
-      };
-
-      const getDistructedArray = (lists) => {
-        return _.go(lists, _.map(sumOfObjProperties));
-      };
-
       const sumOfObjProperties = (list) => {
         return _.go(
           list,
@@ -107,17 +96,24 @@
         );
       };
 
-      const getTuple = _.curry2((indexedKeys, key, list) => {
+      const indexByKey = (list, key) => {
+        return _.go(
+          list,
+          _.indexBy((a) => a[key])
+        );
+      };
+
+      const getTupleByKey = _.curry2((targetList, key, list) => {
+        const indexedKeys = indexByKey(targetList, key);
         return _.go(
           list,
           _.map((list) => [indexedKeys[list[key]], list])
         );
       });
 
-      const getTupleByKey = _.curry2((a, key, b) => {
-        const indexedKeys = indexByKey(a, key);
-        return getTuple(indexedKeys, key, b);
-      });
+      const getDistructedArray = (lists) => {
+        return _.go(lists, _.map(sumOfObjProperties));
+      };
 
       const addSizesQuantity = ([l, s]) => {
         const localSizes = l.sizes;
@@ -130,6 +126,24 @@
         );
       };
 
+      const getAddedSizesQuantity = (tuple) => {
+        return _.go(tuple, _.map(addSizesQuantity), getMerged(tuple));
+      };
+
+      const getIntersectionByKey = _.curry2((targetList, key, list) => {
+        const keys = _.pluck(key, list);
+        return _.go(
+          list,
+          _.filter((list) => _.includes(list[key], keys))
+        );
+
+        /* pluck, filter, includes => intersectionBy 로 리팩토링 가능 */
+        // return _.go(
+        //   list,
+        //   _.intersectionBy((list) => list[key], targetList)
+        // );
+      });
+
       const getMerged = _.curry((tuple, sizes) => {
         return _.go(
           tuple,
@@ -138,54 +152,6 @@
           _.map(([sizes, server]) => {
             return { ...server, sizes };
           })
-        );
-      });
-
-      const getAddedSizesQuantity = (tuple) => {
-        return _.go(tuple, _.map(addSizesQuantity), getMerged(tuple));
-      };
-
-      const server = [
-        {
-          id: 1,
-          sizes: [{ size: "L", name: "item", price: 1000, quantity: 1 }],
-        },
-      ];
-
-      const addToCart = [
-        {
-          id: 1,
-          sizes: [{ size: "L", name: "item", price: 1000, quantity: 2 }],
-        },
-        {
-          id: 2,
-          sizes: [{ size: "XL", name: "item2", price: 1000, quantity: 1 }],
-        },
-      ];
-
-      const result = [
-        {
-          id: 1,
-          sizes: [{ size: "L", name: "item", price: 3000, quantity: 3 }],
-        },
-        {
-          id: 2,
-          sizes: [{ size: "XL", name: "item2", price: 1000, quantity: 1 }],
-        },
-      ];
-
-      const getIntersectionByKey = _.curry2((a, key, b) => {
-        // const keys = filterByKey(a, key);
-        // return _.go(
-        //   b,
-        //   _.filter((b) => _.includes(b[key], keys))
-        // );
-
-        /* pluck, filter, includes => intersectionBy 로 리팩토링 가능 */
-
-        return _.go(
-          b,
-          _.intersectionBy((b) => b[key], a)
         );
       });
 
@@ -207,16 +173,29 @@
 
         // by myself
 
+        // return _.go(
+        //   local,
+        //   getIntersectionByKey(serverData, "id"),
+        //   getTupleByKey(serverData, "id"),
+        //   getAddedSizesQuantity,
+        //   log
+        // );
+      };
+
+      main();
+
+      const fn = async () => {
+        const data = await server();
         return _.go(
           local,
-          getIntersectionByKey(serverData, "id"),
-          getTupleByKey(serverData, "id"),
+          getIntersectionByKey(data, "id"),
+          getTupleByKey(data, "id"),
           getAddedSizesQuantity,
           log
         );
       };
 
-      main();
+      fn();
     </script>
   </body>
 </html>
