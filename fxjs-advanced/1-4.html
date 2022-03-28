@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>
+      함수형 강의 응용편 - 안정한 합성 -> map으로 합성하기 / find 대신 L.filter
+    </title>
+    <script src="https://unpkg.com/fxjs/dist/fx.js"></script>
+  </head>
+  <body>
+    <script>
+      const log = console.log;
+      const { L, C } = window._;
+
+      const data3 = [
+        { name: "AA", age: 35 },
+        { name: "BB", age: 26 },
+        { name: "CC", age: 28 },
+        { name: "CC", age: 34 },
+        { name: "EE", age: 23 },
+      ];
+      // 1. map으로 합성하기
+
+      const f = (x) => x + 10;
+      const g = (x) => x - 5;
+      const fg = (x) => f(g(x));
+
+      // log(fg(10)); // 15
+      // log(fg()); // NaN
+
+      // 인자가 이상할 때, 없을 때도 방어 코드 있어야 함
+
+      // _.go("a", fg, log);
+
+      // map을 사용하됨 -> 모나드
+
+      _.go([10], L.map(fg), _.each(log));
+
+      // 2. find 대신 L.filter
+
+      // find를 사용할 경우 없으면 undefined return 함
+
+      const found = _.find((u) => u.name === "DD", data3);
+      log(found);
+
+      // L.filter를 사용할 경우
+
+      _.go(
+        data3,
+        L.filter((u) => u.name === "DD"),
+        L.take(1),
+        _.each(log)
+      );
+
+      // each + take + filter를 사용하면 없는 경우를 리턴하지 않음
+    </script>
+  </body>
+</html>

@@ -9,9 +9,48 @@
     <script>
       const log = console.log;
       const { L, C } = window._;
-      const list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      const data2 = [
+        { name: "AA", age: 35 },
+        { name: "BB", age: 26 },
+        { name: "CC", age: 28 },
+        { name: "CC", age: 34 },
+        { name: "EE", age: 23 },
+      ];
+
+      // data2의 모든 age 합산
+      _.reduce((total, user) => total + user.age, 0, data2);
+
+      // 좋은 reduce는 시작값이 없는 것이 좋음
+      // acc, cur이 같은 형이 나오도록 하는 것이 복잡도를 줄일 수 있음
+
+      const add = (a, b) => a + b;
+      const getValues = _.map((u) => u.age);
+
+      // 보조 함수를 만들고 a, b의 형을 맞추는 것이 좋음
+
+      _.reduce(add, getValues(data2));
 
       /// 명령형 습관 지우기 ///
+
+      /* reduce는 map + filter 분리 가능  */
+
+      // 30살이 넘는 user의 age 합산하기
+
+      _.reduce(total, (u) => (u.age >= 30 ? total : total + u.age), 0, data2);
+
+      // 아래와 같이 변경 가능
+
+      // 1) filter로 a<=30만 거르기
+      // 2) map으로 age만 뽑기
+      // 3 add로 reduce 코드 대체
+
+      _.reduce(
+        add,
+        _.map(
+          (u) => u.age,
+          _.filter((u) => u.age <= 30, data2)
+        )
+      );
     </script>
   </body>
 </html>

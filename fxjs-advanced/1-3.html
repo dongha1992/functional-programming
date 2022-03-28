@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>함수형 강의 응용편 - query</title>
+    <script src="https://unpkg.com/fxjs/dist/fx.js"></script>
+  </head>
+  <body>
+    <script>
+      const log = console.log;
+      const { L, C } = window._;
+
+      const obj2 = {
+        a: 1,
+        b: undefined,
+        c: "CC",
+        d: "DD",
+      };
+
+      /* obj to query string */
+
+      // 일반 함수로
+      const getQuery = (obj) => {
+        let result = "";
+
+        for (const k in obj) {
+          const v = obj[k];
+          if (!v) continue;
+          if (result !== "") result += "&";
+          result += `${k}=${v}`;
+        }
+        return result;
+      };
+
+      const getQuery2 = (obj) => {
+        return Object.entries(obj).reduce((q, [k, v], i) => {
+          if (!v) return q;
+          return q + (i > 0 ? "&" : "") + k + "=" + v;
+        }, "");
+      };
+
+      // 함수형으로
+
+      const getQuery3 = (obj) => {
+        return _.reduce(
+          (a, b) => `${a}&${b}`,
+          _.map(
+            ([k, v]) => `${k}=${v}`,
+            _.filter(([_, v]) => v !== undefined, Object.entries(obj))
+          )
+        );
+      };
+
+      const join = _.curry((sep, iter) => {
+        return _.reduce((a, b) => `${a}${sep}${b}`, iter);
+      });
+
+      // 함수형 리팩토링
+
+      const getQuery4 = _.pipe(
+        _.entries,
+        _.filter(([_, v]) => v !== undefined),
+        _.map(join("=")),
+        join("&")
+      );
+
+      const queryString = getQuery4(obj2);
+
+      /* query string to obj */
+
+      const split = _.curry((sep, str) => str.split(sep));
+
+      const queryToObj = (queryString) => {
+        return _.go(
+          queryString,
+          split("&"),
+          _.map(split("=")),
+          _.map(([k, v]) => ({ [k]: v })),
+          _.reduce(_.assign),
+          log
+        );
+      };
+
+      queryToObj(queryString);
+    </script>
+  </body>
+</html>
