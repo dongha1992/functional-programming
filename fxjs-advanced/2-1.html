@@ -9,6 +9,83 @@
     <script>
       const log = console.log;
       const { L, C } = window._;
+
+      const obj = {
+        a: 1,
+        b: 2,
+        c: 3,
+        d: 4,
+      };
+
+      // 1. values
+
+      L.values = function* (obj) {
+        for (const k in obj) yield obj[k];
+      };
+
+      const a = _.go(
+        obj,
+        L.values,
+        L.map((a) => a * 2),
+        _.reduce((a, b) => a + b)
+      );
+
+      // 2. entries
+
+      L.entries = function* (obj) {
+        for (const k in obj) yield [k, obj[k]];
+      };
+
+      const b = _.go(
+        obj,
+        L.entries,
+        L.map((a) => a * 2),
+        _.reduce((a, b) => a + b)
+      );
+
+      // 3. keys
+
+      L.keys = function* (obj) {
+        for (const k in obj) {
+          yield k;
+        }
+      };
+
+      // _.go(obj, L.keys, _.each(log));
+
+      /* 어떠한 값이든 이터러블하게 다루기 */
+      // 제너레이터를 이용하여 객체를 이터러블하게 만듦 //
+
+      // 4. object
+
+      const arr = [
+        ["a", 1],
+        ["b", 2],
+        ["c", 3],
+      ];
+
+      const arrToObject = (entries) => {
+        return _.go(
+          entries,
+          _.map(([k, v]) => ({ [k]: v })),
+          _.reduce(_.assign),
+          log
+        );
+      };
+
+      const arrToObject2 = (entries) => {
+        return _.reduce(
+          (obj, [k, v]) => {
+            return (obj[k] = v), obj;
+          },
+          {},
+          entries
+        );
+      };
+
+      /* new Map의 경우 JSON.stringfy 하면 정보가 사라짐 */
+      /* 하지만 위에 만든 함수를 통과시키면 객체로 변환 */
+      /* 이유는 new Map이 이터러블 객체를 반환하기 때문에! */
     </script>
   </body>
 </html>
